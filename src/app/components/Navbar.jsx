@@ -1,0 +1,180 @@
+import Image from "next/image";
+import Link from "next/link";
+
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="size-7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m15.5 15.5 5 5" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="size-7"
+      fill="currentColor"
+    >
+      <circle cx="12" cy="7" r="4" />
+      <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4Z" />
+    </svg>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="size-7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 4h2l2.2 11h10.5l2.3-8H6" />
+
+      <circle cx="9" cy="20" r="1" fill="currentColor" />
+
+      <circle cx="18" cy="20" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <header className="w-full px-4 pt-8">
+      {/* Hovednavigasjon */}
+      <nav
+        aria-label="Hovednavigasjon"
+        className="mx-auto max-w-7xl border-2 border-[#f7b900] bg-[#001016]"
+      >
+        <div className="grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-3 px-4 py-3 sm:px-8 md:py-0">
+          {/* Logo */}
+          <Link
+            href="/"
+            aria-label="Gå til forsiden"
+            className="col-start-1 row-start-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
+          >
+            <Image
+              src="/images/pokebua-logo.png"
+              alt="Pokébua.no"
+              width={180}
+              height={80}
+              priority
+              className="h-auto w-28 sm:w-36"
+            />
+          </Link>
+
+          {/* Navigasjonslenker */}
+          <ul className="col-span-3 row-start-2 flex items-center justify-center gap-4 md:col-span-1 md:col-start-2 md:row-start-1 md:gap-8">
+            <li>
+              <Link
+                href="/"
+                className="rounded-sm px-2 py-2 text-sm font-semibold text-[#f7b900] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:text-base"
+              >
+                Hjem
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/produkter"
+                className="rounded-sm px-2 py-2 text-sm font-semibold text-[#f7b900] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:text-base"
+              >
+                Produkter
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/event"
+                className="rounded-sm px-2 py-2 text-sm font-semibold text-[#f7b900] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:text-base"
+              >
+                Event
+              </Link>
+            </li>
+          </ul>
+
+          {/* Ikonlenker */}
+          <div className="col-start-3 row-start-1 flex items-center gap-1 text-[#f7b900] sm:gap-2">
+            <Link
+              href="/sok"
+              aria-label="Søk"
+              className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
+            >
+              <SearchIcon />
+            </Link>
+
+            <Link
+              href="/konto"
+              aria-label="Min konto"
+              className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
+            >
+              <UserIcon />
+            </Link>
+
+            <Link
+              href="/handlekurv"
+              aria-label="Handlekurv"
+              className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
+            >
+              <CartIcon />
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Sosiale medier */}
+      <nav
+        aria-label="Sosiale medier"
+        className="mx-auto -mt-[2px] w-64 border-x-2 border-b-2 border-[#f7b900] bg-[#001016] sm:w-72"
+      >
+        <div className="flex h-14 items-center justify-center gap-14">
+          <a
+            href="https://www.tiktok.com/@Pokebua.no"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Besøk Pokébua på TikTok"
+            className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
+          >
+            <Image
+              src="/images/tiktok-logo.svg"
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 object-contain"
+            />
+          </a>
+
+          <a
+            href="https://www.twitch.tv/pokebua"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Besøk Pokébua på Twitch"
+            className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
+          >
+            <Image
+              src="/images/twitch-logo.svg"
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 object-contain"
+            />
+          </a>
+        </div>
+      </nav>
+    </header>
+  );
+}
