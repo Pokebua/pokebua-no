@@ -10,6 +10,8 @@ function SearchIcon() {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <circle cx="10.5" cy="10.5" r="6.5" />
       <path d="m15.5 15.5 5 5" />
@@ -44,9 +46,7 @@ function CartIcon() {
       strokeLinejoin="round"
     >
       <path d="M3 4h2l2.2 11h10.5l2.3-8H6" />
-
       <circle cx="9" cy="20" r="1" fill="currentColor" />
-
       <circle cx="18" cy="20" r="1" fill="currentColor" />
     </svg>
   );
@@ -54,17 +54,17 @@ function CartIcon() {
 
 export default function Navbar() {
   return (
-    <header className="w-full px-4 pt-8">
-      {/* Hovednavigasjon */}
+    <header className="w-full">
+      {/* Main navigation */}
       <nav
-        aria-label="Hovednavigasjon"
-        className="mx-auto max-w-7xl border-2 border-[#f7b900] bg-[#001016]"
+        aria-label="Main navigation"
+        className="mx-auto border-y-2 border-[#f7b900] bg-[#001016]"
       >
         <div className="grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-3 px-4 py-3 sm:px-8 md:py-0">
-          {/* Logo */}
+          {/* Pokébua logo */}
           <Link
             href="/"
-            aria-label="Gå til forsiden"
+            aria-label="Go to the home page"
             className="col-start-1 row-start-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
@@ -77,7 +77,7 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Navigasjonslenker */}
+          {/* Navigation links */}
           <ul className="col-span-3 row-start-2 flex items-center justify-center gap-4 md:col-span-1 md:col-start-2 md:row-start-1 md:gap-8">
             <li>
               <Link
@@ -107,11 +107,11 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Ikonlenker */}
+          {/* Account icons */}
           <div className="col-start-3 row-start-1 flex items-center gap-1 text-[#f7b900] sm:gap-2">
             <Link
               href="/sok"
-              aria-label="Søk"
+              aria-label="Search"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
               <SearchIcon />
@@ -119,7 +119,7 @@ export default function Navbar() {
 
             <Link
               href="/konto"
-              aria-label="Min konto"
+              aria-label="My account"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
               <UserIcon />
@@ -127,7 +127,7 @@ export default function Navbar() {
 
             <Link
               href="/handlekurv"
-              aria-label="Handlekurv"
+              aria-label="Shopping cart"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
               <CartIcon />
@@ -136,17 +136,17 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Sosiale medier */}
+      {/* Social media navigation */}
       <nav
-        aria-label="Sosiale medier"
-        className="mx-auto -mt-[2px] w-64 border-x-2 border-b-2 border-[#f7b900] bg-[#001016] sm:w-72"
+        aria-label="Social media"
+        className="mx-auto -mt-0.5 w-64 border-x-2 border-b-2 border-[#f7b900] bg-[#001016] sm:w-72"
       >
         <div className="flex h-14 items-center justify-center gap-14">
           <a
-            href="https://www.tiktok.com/@Pokebua.no"
+            href="https://www.tiktok.com/@pokebua.no"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Besøk Pokébua på TikTok"
+            aria-label="Visit Pokébua on TikTok"
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
@@ -162,7 +162,7 @@ export default function Navbar() {
             href="https://www.twitch.tv/pokebua"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Besøk Pokébua på Twitch"
+            aria-label="Visit Pokébua on Twitch"
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
