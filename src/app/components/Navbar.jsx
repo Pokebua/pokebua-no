@@ -68,7 +68,7 @@ export default function Navbar() {
             className="col-start-1 row-start-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
-              src="/images/pokebua-logo.png"
+              src="/images/pokebua_logo_transparent_cropped.png"
               alt="Pokébua.no"
               width={180}
               height={80}
@@ -150,10 +150,10 @@ export default function Navbar() {
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
-              src="/images/tiktok-logo.svg"
+              src="/images/tiktok-app-icon-logo-2025-1.png"
               alt=""
-              width={36}
-              height={36}
+              width={48}
+              height={48}
               className="size-9 object-contain"
             />
           </a>
@@ -166,10 +166,10 @@ export default function Navbar() {
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
             <Image
-              src="/images/twitch-logo.svg"
+              src="/images/twitch-vector-logo-twitch-vector-icon-logotype-social-media_901408-474.avif"
               alt=""
-              width={36}
-              height={36}
+              width={48}
+              height={48}
               className="size-9 object-contain"
             />
           </a>
