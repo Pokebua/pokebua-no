@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AiFillTikTok } from "react-icons/ai";
+import { BsTwitch } from "react-icons/bs";
 
 function SearchIcon() {
   return (
@@ -149,13 +151,7 @@ export default function Navbar() {
             aria-label="Visit Pokébua on TikTok"
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
-            <Image
-              src="/images/tiktok-app-icon-logo-2025-1.png"
-              alt=""
-              width={48}
-              height={48}
-              className="size-9 object-contain"
-            />
+            <AiFillTikTok className="size-9 text-[#f7b900]" />
           </a>
 
           <a
@@ -165,13 +161,7 @@ export default function Navbar() {
             aria-label="Visit Pokébua on Twitch"
             className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
           >
-            <Image
-              src="/images/twitch-vector-logo-twitch-vector-icon-logotype-social-media_901408-474.avif"
-              alt=""
-              width={48}
-              height={48}
-              className="size-9 object-contain"
-            />
+            <BsTwitch className="size-9 text-[#f7b900]" />
           </a>
         </div>
       </nav>
