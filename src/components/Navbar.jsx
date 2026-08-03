@@ -82,6 +82,18 @@ export default function Navbar() {
           {/* Navigation links */}
           <ul className="col-span-3 row-start-2 flex items-center justify-center gap-4 md:col-span-1 md:col-start-2 md:row-start-1 md:gap-8">
             <li>
+              <a
+                href="https://www.twitch.tv/pokebua"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit Pokébua on Twitch"
+                className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
+              >
+                <BsTwitch className="size-9 text-pink-400" />
+              </a>
+            </li>
+
+            <li>
               <Link
                 href="/"
                 className="rounded-sm px-2 py-2 text-sm font-semibold text-[#f7b900] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:text-base"
@@ -106,6 +118,17 @@ export default function Navbar() {
               >
                 Event
               </Link>
+            </li>
+            <li>
+              <a
+                href="https://www.tiktok.com/@pokebua.no"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit Pokébua on TikTok"
+                className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
+              >
+                <AiFillTikTok className="size-9 text-white" />
+              </a>
             </li>
           </ul>
 
@@ -135,34 +158,6 @@ export default function Navbar() {
               <CartIcon />
             </Link>
           </div>
-        </div>
-      </nav>
-
-      {/* Social media navigation */}
-      <nav
-        aria-label="Social media"
-        className="mx-auto -mt-0.5 w-64 border-x-2 border-b-2 border-[#f7b900] bg-[#001016] sm:w-72"
-      >
-        <div className="flex h-14 items-center justify-center gap-14">
-          <a
-            href="https://www.tiktok.com/@pokebua.no"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit Pokébua on TikTok"
-            className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
-          >
-            <AiFillTikTok className="size-9 text-[#f7b900]" />
-          </a>
-
-          <a
-            href="https://www.twitch.tv/pokebua"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit Pokébua on Twitch"
-            className="grid size-11 place-items-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
-          >
-            <BsTwitch className="size-9 text-[#f7b900]" />
-          </a>
         </div>
       </nav>
     </header>
