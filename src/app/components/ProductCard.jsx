@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="bg-black p-3 text-white">
-        <h2 className="text-sm">{product.name}</h2>
+        <h2 className="text-base">{product.name}</h2>
 
         <div className="mt-4 flex items-end justify-between">
           <p className="text-2xl font-bold">
