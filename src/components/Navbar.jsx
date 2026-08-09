@@ -1,58 +1,10 @@
 import Link from "next/link";
 import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
+import { CgProfile } from "react-icons/cg";
+import { IoCart } from "react-icons/io5";
+import { IoIosSearch } from "react-icons/io";
 import PokebuaLogo from "./PokebuaLogo";
-
-function SearchIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-7"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="10.5" cy="10.5" r="6.5" />
-      <path d="m15.5 15.5 5 5" />
-    </svg>
-  );
-}
-
-function UserIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-7"
-      fill="currentColor"
-    >
-      <circle cx="12" cy="7" r="4" />
-      <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4Z" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-7"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 4h2l2.2 11h10.5l2.3-8H6" />
-      <circle cx="9" cy="20" r="1" fill="currentColor" />
-      <circle cx="18" cy="20" r="1" fill="currentColor" />
-    </svg>
-  );
-}
 
 export default function Navbar() {
   return (
@@ -126,7 +78,7 @@ export default function Navbar() {
               aria-label="Search"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
-              <SearchIcon />
+              <IoIosSearch className="size-7" />
             </Link>
 
             <Link
@@ -134,7 +86,7 @@ export default function Navbar() {
               aria-label="My account"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
-              <UserIcon />
+              <CgProfile className="size-7" />
             </Link>
 
             <Link
@@ -142,7 +94,7 @@ export default function Navbar() {
               aria-label="Shopping cart"
               className="grid size-10 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] sm:size-11"
             >
-              <CartIcon />
+              <IoCart className="size-7" />
             </Link>
           </div>
         </div>
