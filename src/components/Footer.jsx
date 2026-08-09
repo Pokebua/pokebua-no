@@ -1,4 +1,3 @@
-```jsx
 import Link from "next/link";
 import { legalLinks } from "@/data/legalLinks";
 
@@ -107,4 +106,3 @@ export default function Footer() {
     </footer>
   );
 }
-```;
