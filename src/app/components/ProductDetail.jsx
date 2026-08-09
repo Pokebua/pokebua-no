@@ -2,7 +2,7 @@ import Image from "next/image";
 
 function ProductDetail({ product }) {
   return (
-    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 p-6 md:grid-cols-2">
+    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 p-6 font-sans md:grid-cols-2">
       <div className="flex aspect-square items-center justify-center rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-1">
         <Image
           src={product.image}
