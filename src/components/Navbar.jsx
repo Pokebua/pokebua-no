@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
+import PokebuaLogo from "./PokebuaLogo";
 
 function SearchIcon() {
   return (
@@ -63,21 +63,8 @@ export default function Navbar() {
         className="mx-auto border-y-2 border-[#f7b900] bg-[#001016]"
       >
         <div className="grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-3 px-4 py-3 sm:px-8 md:py-0">
-          {/* Pokébua logo */}
-          <Link
-            href="/"
-            aria-label="Go to the home page"
-            className="col-start-1 row-start-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900]"
-          >
-            <Image
-              src="/images/pokebua_logo_transparent_cropped.png"
-              alt="Pokébua.no"
-              width={180}
-              height={80}
-              priority
-              className="h-auto w-28 sm:w-36"
-            />
-          </Link>
+          {/*Pokebua Logo */}
+          <PokebuaLogo />
 
           {/* Navigation links */}
           <ul className="col-span-3 row-start-2 flex items-center justify-center gap-4 md:col-span-1 md:col-start-2 md:row-start-1 md:gap-8">
