@@ -2,7 +2,7 @@ import Image from "next/image";
 
 function ProductDetail({ product }) {
   return (
-    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 p-6 md:grid-cols-2">
+    <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 p-6 font-sans md:grid-cols-2">
       <div className="flex aspect-square items-center justify-center rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-1">
         <Image
           src={product.image}
@@ -25,14 +25,14 @@ function ProductDetail({ product }) {
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <button
             type="button"
-            className="rounded-lg border-2 bg-black border-yellow-400 px-6 py-3 font-semibold text-white"
+            className="rounded-lg border-3 bg-black cursor-pointer transition-transform hover:scale-105 border-yellow-400 px-6 py-3 font-semibold text-white"
           >
             Kjøp Nå
           </button>
 
           <button
             type="button"
-            className="rounded-lg border-2 bg-black border-yellow-400 px-6 py-3 font-semibold text-white"
+            className="rounded-lg border-3 bg-black cursor-pointer transition-transform hover:scale-105 border-yellow-400 px-6 py-3 font-semibold text-white"
           >
             Legg i handlekurv
           </button>
