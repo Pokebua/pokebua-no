@@ -1,65 +1,110 @@
 import Image from "next/image";
 
+import navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+const categories = [
+  {
+    name: "Boosterpacks",
+    image: "/images/boosterpacks.jpg",
+  },
+  {
+    name: "ETB / Collection",
+    image: "/images/etb.jpg",
+  },
+  {
+    name: "Events",
+    image: "/images/events.jpg",
+  },
+  {
+    name: "Gradering",
+    image: "/images/gradering.jpg",
+  },
+  {
+    name: "Engelsk",
+    image: "/images/engelsk.jpg",
+  },
+  {
+    name: "Japansk",
+    image: "/images/japansk.jpg",
+  },
+  {
+    name: "Kinesisk",
+    image: "/images/kinesisk.jpg",
+  },
+];
+
+const news = [
+  "Produkt 1",
+  "Produkt 2",
+  "Produkt 3",
+  "Produkt 4",
+  "Produkt 5",
+  "Produkt 6",
+  "Produkt 7",
+  "Produkt 8",
+];
+
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="min-h-screen bg-white">
+      {/* Tomt område øverst */}
+      <section className="h-64" />
+
+      {/* Hovedboks */}
+      <section className="mx-auto w-[90%] max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4">
+        {/* Kategori */}
+        <h2 className="mb-4 text-center text-xl font-bold">Kategori</h2>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+          {categories.map((category) => (
+            <article
+              key={category.name}
+              className="overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <div className="relative aspect-square">
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <p className="bg-black px-2 py-1 text-center text-xs font-bold text-white">
+                {category.name}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        {/* Linje mellom kategori og nyheter */}
+        <div className="my-4 border-t-2 border-[#f7b900]" />
+
+        {/* Nyheter */}
+        <h2 className="mb-2 text-center text-xl font-bold">Nyheter</h2>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {news.map((product) => (
+            <article
+              key={product}
+              className="aspect-square rounded-xl border-2 border-[#f7b900] bg-white"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <div className="flex h-full items-center justify-center">
+                <p className="text-sm text-gray-400">{product}</p>
+              </div>
+            </article>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* Nederste linje */}
+        <div className="mt-8 border-t-2 border-[#f7b900]" />
+
+        {/* Tom plass nederst */}
+        <div className="h-24" />
+      </section>
+
+      <div className="h-16" />
+    </main>
   );
 }
