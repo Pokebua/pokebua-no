@@ -1,65 +1,88 @@
 import Image from "next/image";
+import { categories } from "@/data/categories";
+
+const news = [
+  "Produkt 1",
+  "Produkt 2",
+  "Produkt 3",
+  "Produkt 4",
+  "Produkt 5",
+  "Produkt 6",
+  "Produkt 7",
+  "Produkt 8",
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="min-h-screen bg-white px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
+      <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
+
+      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4 sm:p-6">
+        {/* Categories */}
+        <section aria-labelledby="categories-heading">
+          <h2
+            id="categories-heading"
+            className="mb-4 text-center text-xl font-bold"
+          >
+            Kategorier
+          </h2>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {categories.map((category) => (
+              <article
+                key={category.name}
+                className="overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white"
+              >
+                <div className="relative aspect-square">
+                  <Image
+                    src={category.image}
+                    alt=""
+                    fill
+                    loading={
+                      category.image === "/images/gradering.png"
+                        ? "eager"
+                        : "lazy"
+                    }
+                    sizes="(min-width: 1024px) 160px, (min-width: 640px) 23vw, 45vw"
+                    className="object-contain"
+                  />
+                </div>
+
+                <h3 className="flex min-h-11 items-center justify-center bg-[#001016] px-2 py-2 text-center text-xs font-bold text-[#f7b900]">
+                  {category.name}
+                </h3>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* New products */}
+        <section
+          aria-labelledby="news-heading"
+          className="mt-6 border-t-2 border-[#f7b900] pt-6"
+        >
+          <h2 id="news-heading" className="mb-4 text-center text-xl font-bold">
+            Nyheter
+          </h2>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {news.map((product) => (
+              <article
+                key={product}
+                className="flex aspect-square items-center justify-center rounded-xl border-2 border-[#f7b900] bg-white p-4"
+              >
+                <h3 className="text-sm font-medium text-gray-600">{product}</h3>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Bottom spacing and decorative border */}
+        <div
+          aria-hidden="true"
+          className="mt-8 h-24 border-t-2 border-[#f7b900]"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
