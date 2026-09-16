@@ -1,38 +1,5 @@
 import Image from "next/image";
-
-import navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-
-const categories = [
-  {
-    name: "Boosterpacks",
-    image: "/images/boosterpacks.jpg",
-  },
-  {
-    name: "ETB / Collection",
-    image: "/images/etb.jpg",
-  },
-  {
-    name: "Events",
-    image: "/images/events.jpg",
-  },
-  {
-    name: "Gradering",
-    image: "/images/gradering.jpg",
-  },
-  {
-    name: "Engelsk",
-    image: "/images/engelsk.jpg",
-  },
-  {
-    name: "Japansk",
-    image: "/images/japansk.jpg",
-  },
-  {
-    name: "Kinesisk",
-    image: "/images/kinesisk.jpg",
-  },
-];
+import { categories } from "@/data/categories";
 
 const news = [
   "Produkt 1",
@@ -47,64 +14,70 @@ const news = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
-      {/* Tomt område øverst */}
-      <section className="h-64" />
+    <main className="min-h-screen bg-white px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
+      <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
 
-      {/* Hovedboks */}
-      <section className="mx-auto w-[90%] max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4">
-        {/* Kategori */}
-        <h2 className="mb-4 text-center text-xl font-bold">Kategori</h2>
+      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4 sm:p-6">
+        {/* Categories */}
+        <section aria-labelledby="categories-heading">
+          <h2
+            id="categories-heading"
+            className="mb-4 text-center text-xl font-bold"
+          >
+            Kategorier
+          </h2>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-          {categories.map((category) => (
-            <article
-              key={category.name}
-              className="overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white"
-            >
-              <div className="relative aspect-square">
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {categories.map((category) => (
+              <article
+                key={category.name}
+                className="overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white"
+              >
+                <div className="relative aspect-square">
+                  <Image
+                    src={category.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 160px, (min-width: 640px) 23vw, 45vw"
+                    className="object-contain"
+                  />
+                </div>
 
-              <p className="bg-black px-2 py-1 text-center text-xs font-bold text-white">
-                {category.name}
-              </p>
-            </article>
-          ))}
-        </div>
+                <h3 className="flex min-h-11 items-center justify-center bg-[#001016] px-2 py-2 text-center text-xs font-bold text-[#f7b900]">
+                  {category.name}
+                </h3>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        {/* Linje mellom kategori og nyheter */}
-        <div className="my-4 border-t-2 border-[#f7b900]" />
+        {/* New products */}
+        <section
+          aria-labelledby="news-heading"
+          className="mt-6 border-t-2 border-[#f7b900] pt-6"
+        >
+          <h2 id="news-heading" className="mb-4 text-center text-xl font-bold">
+            Nyheter
+          </h2>
 
-        {/* Nyheter */}
-        <h2 className="mb-2 text-center text-xl font-bold">Nyheter</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {news.map((product) => (
+              <article
+                key={product}
+                className="flex aspect-square items-center justify-center rounded-xl border-2 border-[#f7b900] bg-white p-4"
+              >
+                <h3 className="text-sm font-medium text-gray-600">{product}</h3>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {news.map((product) => (
-            <article
-              key={product}
-              className="aspect-square rounded-xl border-2 border-[#f7b900] bg-white"
-            >
-              <div className="flex h-full items-center justify-center">
-                <p className="text-sm text-gray-400">{product}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* Nederste linje */}
-        <div className="mt-8 border-t-2 border-[#f7b900]" />
-
-        {/* Tom plass nederst */}
-        <div className="h-24" />
-      </section>
-
-      <div className="h-16" />
+        {/* Bottom spacing and decorative border */}
+        <div
+          aria-hidden="true"
+          className="mt-8 h-24 border-t-2 border-[#f7b900]"
+        />
+      </div>
     </main>
   );
 }
