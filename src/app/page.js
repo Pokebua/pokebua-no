@@ -38,6 +38,11 @@ export default function Home() {
                     src={category.image}
                     alt=""
                     fill
+                    loading={
+                      category.image === "/images/gradering.png"
+                        ? "eager"
+                        : "lazy"
+                    }
                     sizes="(min-width: 1024px) 160px, (min-width: 640px) 23vw, 45vw"
                     className="object-contain"
                   />
