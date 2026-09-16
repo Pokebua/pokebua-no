@@ -187,6 +187,15 @@ export default function Navbar() {
       className="relative z-30 border-y-2 border-[#f7b900] bg-[#001016] text-[#f7b900]"
       onKeyDown={handleEscape}
     >
+      {/* Skip link: visible when focused with the keyboard */}
+      <a
+        href="#main-content"
+        onClick={closeMenus}
+        className="sr-only z-50 rounded-md bg-[#f7b900] px-4 py-3 font-semibold text-[#001016] focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#001016]"
+      >
+        Hopp til hovedinnhold
+      </a>
+
       <nav aria-label="Hovedmeny" className="mx-auto max-w-7xl">
         <div className="grid min-h-24 grid-cols-[1fr_auto] items-center gap-2 px-4 py-3 sm:px-8 lg:grid-cols-[1fr_auto_1fr]">
           {/* Logo */}
@@ -230,7 +239,7 @@ export default function Navbar() {
             </ul>
           </div>
 
-          {/* Account actions */}
+          {/* Account actions and mobile menu button */}
           <div className="flex items-center justify-self-end sm:gap-1">
             {accountLinks.map(({ href, label, Icon }) => (
               <Link

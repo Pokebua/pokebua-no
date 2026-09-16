@@ -14,7 +14,7 @@ const news = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
+    <div className="min-h-screen bg-white px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
       <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
 
       <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4 sm:p-6">
@@ -83,6 +83,6 @@ export default function Home() {
           className="mt-8 h-24 border-t-2 border-[#f7b900]"
         />
       </div>
-    </main>
+    </div>
   );
 }
