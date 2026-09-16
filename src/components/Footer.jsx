@@ -43,7 +43,7 @@ export default function Footer() {
                 >
                   <BsTwitch
                     aria-hidden="true"
-                    className="size-6 shrink-0 text-pink-400"
+                    className="size-6 shrink-0 text-[#f7b900]"
                   />
                   <span>Twitch</span>
                   <span className="sr-only">(åpnes i en ny fane)</span>
@@ -59,7 +59,7 @@ export default function Footer() {
                 >
                   <AiFillTikTok
                     aria-hidden="true"
-                    className="size-6 shrink-0 text-white"
+                    className="size-6 shrink-0 text-[#f7b900]"
                   />
                   <span>TikTok</span>
                   <span className="sr-only">(åpnes i en ny fane)</span>
