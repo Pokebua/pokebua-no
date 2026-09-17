@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -13,6 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const sairaStencil = localFont({
+  src: "../fonts/SairaStencil-Regular.ttf",
+  variable: "--font-saira-stencil",
+  weight: "400",
+});
+
 export const metadata = {
   title: "Pokébua",
   description: "Kjøp, selg og bytt Pokémon-kort hos Pokébua.",
@@ -22,7 +29,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="no"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sairaStencil.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Navbar />
