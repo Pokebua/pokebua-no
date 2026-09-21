@@ -1,5 +1,5 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Saira_Stencil_One } from "next/font/google";
+
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const sairaStencil = localFont({
-  src: "../fonts/SairaStencil-Regular.ttf",
+const sairaStencil = Saira_Stencil_One({
   variable: "--font-saira-stencil",
+  subsets: ["latin"],
   weight: "400",
 });
 
