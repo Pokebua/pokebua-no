@@ -18,7 +18,7 @@ export default async function ProductPage({ params }) {
   }
 
   return (
-    <main>
+    <main className="min-h-screen bg-[#FFF8E6]">
       <ProductDetail product={product} />
     </main>
   );

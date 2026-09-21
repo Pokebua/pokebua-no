@@ -8,13 +8,13 @@ export default function ProductCard({ product }) {
       className="block overflow-hidden rounded-2xl border-2 border-yellow-400 bg-yellow-100"
     >
       <article>
-        <div className="aspect-square bg-yellow-100 p-1">
+        <div className="aspect-square bg-yellow-100">
           <Image
             src={product.image}
             alt={product.name}
             width={500}
             height={500}
-            className="h-full w-full object-contain"
+            className="h-full w-full object-cover"
           />
         </div>
 
