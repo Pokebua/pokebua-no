@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function ProductCard({ product }) {
   return (
     <Link
-      href={`/produkt/${product.id}`}
+      href={`/produkter/${product.category}/${product.id}`}
       className="block overflow-hidden rounded-2xl border-2 border-yellow-400 bg-yellow-100"
     >
       <article>
