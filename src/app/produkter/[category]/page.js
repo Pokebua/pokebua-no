@@ -16,11 +16,6 @@ export default async function CategoryPage({ params }) {
   if (!category) {
     notFound();
   }
-
-  if (!category) {
-    notFound();
-  }
-
   return (
     <main className="min-h-screen bg-[#FFF8E6] px-4 py-12 sm:px-8">
       <section aria-labelledby="category-heading" className="mx-auto max-w-6xl">
