@@ -7,9 +7,9 @@ import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { IoCart, IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
-import { IoIosSearch } from "react-icons/io";
 import { categories } from "@/data/categories";
 import PokebuaLogo from "./PokebuaLogo";
+import NavbarSearch from "./NavbarSearch";
 
 const productLinks = [
   ...categories.map(({ name, slug }) => ({
@@ -33,7 +33,6 @@ const socialLinks = [
 ];
 
 const accountLinks = [
-  { href: "/sok", label: "Søk", Icon: IoIosSearch },
   { href: "/konto", label: "Min konto", Icon: CgProfile },
   { href: "/handlekurv", label: "Handlekurv", Icon: IoCart },
 ];
@@ -241,6 +240,8 @@ export default function Navbar() {
 
           {/* Account actions and mobile menu button */}
           <div className="flex items-center justify-self-end sm:gap-1">
+            <NavbarSearch />
+
             {accountLinks.map(({ href, label, Icon }) => (
               <Link
                 key={href}
