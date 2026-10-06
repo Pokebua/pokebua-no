@@ -7,7 +7,7 @@ export default function NotFound() {
         aria-labelledby="not-found-heading"
         className="w-full max-w-2xl rounded-xl border-2 border-[#f7b900] bg-white p-8 text-center text-[#001016] sm:p-12"
       >
-        <p className="mb-2 text-6xl font-bold text-[#f7b900] [-webkit-text-stroke:2px_#001016] sm:text-7xl">
+        <p className="mb-2 text-6xl font-bold text-[#001016] sm:text-7xl">
           404
         </p>
 
