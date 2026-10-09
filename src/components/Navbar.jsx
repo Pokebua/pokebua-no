@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { IoCart, IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
+import { IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
 import { categories } from "@/data/categories";
 import PokebuaLogo from "./PokebuaLogo";
 import NavbarSearch from "./NavbarSearch";
+import NavbarCart from "./NavbarCart";
 
 const productLinks = [
   ...categories.map(({ name, slug }) => ({
@@ -32,10 +33,7 @@ const socialLinks = [
   },
 ];
 
-const accountLinks = [
-  { href: "/konto", label: "Min konto", Icon: CgProfile },
-  { href: "/handlekurv", label: "Handlekurv", Icon: IoCart },
-];
+const accountLinks = [{ href: "/konto", label: "Min konto", Icon: CgProfile }];
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
@@ -253,6 +251,10 @@ export default function Navbar() {
                 <Icon aria-hidden="true" className="size-6" />
               </Link>
             ))}
+
+            <NavbarCart />
+
+            {/* Keep your existing mobile menu button below */}
 
             <button
               ref={menuButtonRef}
