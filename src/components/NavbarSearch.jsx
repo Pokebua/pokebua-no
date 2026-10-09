@@ -78,7 +78,7 @@ export default function NavbarSearch() {
             <input
               ref={searchInputRef}
               id="navbar-search"
-              type="text"
+              type="search"
               className="mt-3 min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016]"
             />
 
