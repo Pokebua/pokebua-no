@@ -7,9 +7,9 @@ import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { IoCart, IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
-import { IoIosSearch } from "react-icons/io";
 import { categories } from "@/data/categories";
 import PokebuaLogo from "./PokebuaLogo";
+import NavbarSearch from "./NavbarSearch";
 
 const productLinks = [
   ...categories.map(({ name, slug }) => ({
@@ -260,17 +260,7 @@ export default function Navbar() {
 
           {/* Account actions and mobile menu button */}
           <div className="flex items-center justify-self-end sm:gap-1">
-            <button
-              ref={searchButtonRef}
-              type="button"
-              aria-label="Søk"
-              aria-expanded={searchOpen}
-              aria-controls="search-panel"
-              onClick={() => setSearchOpen(true)}
-              className={iconClassName}
-            >
-              <IoIosSearch aria-hidden="true" className="size-6" />
-            </button>
+            <NavbarSearch />
 
             {accountLinks.map(({ href, label, Icon }) => (
               <Link
