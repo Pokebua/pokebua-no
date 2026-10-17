@@ -10,7 +10,7 @@ import { IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
 import { categories } from "@/data/categories";
 import PokebuaLogo from "./PokebuaLogo";
 import NavbarSearch from "./NavbarSearch";
-import NavbarCart from "./NavbarCart";
+import Cart from "./Cart";
 
 const productLinks = [
   ...categories.map(({ name, slug }) => ({
@@ -33,7 +33,9 @@ const socialLinks = [
   },
 ];
 
-const accountLinks = [{ href: "/konto", label: "Min konto", Icon: CgProfile }];
+const accountLinks = [
+  { href: "/konto", label: "Min konto", Icon: CgProfile },
+];
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
@@ -252,9 +254,7 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <NavbarCart />
-
-            {/* Keep your existing mobile menu button below */}
+            <Cart />
 
             <button
               ref={menuButtonRef}
