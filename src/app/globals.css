@@ -41,7 +41,9 @@ body {
 }
 
 /* Style the native search clear button */
-input[type="search"]::-webkit-search-cancel-button {
+/* Style the native search clear button */
+@layer base {
+  input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;
   width: 24px;
@@ -56,4 +58,5 @@ input[type="search"]::-webkit-search-cancel-button {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
+}
 }
