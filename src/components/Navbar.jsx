@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { AiFillTikTok } from "react-icons/ai";
 import { BsTwitch } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { IoCart, IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
+import { IoChevronDown, IoClose, IoMenu } from "react-icons/io5";
 import { categories } from "@/data/categories";
 import PokebuaLogo from "./PokebuaLogo";
 import NavbarSearch from "./NavbarSearch";
+import Cart from "./Cart";
 
 const productLinks = [
   ...categories.map(({ name, slug }) => ({
@@ -34,7 +35,6 @@ const socialLinks = [
 
 const accountLinks = [
   { href: "/konto", label: "Min konto", Icon: CgProfile },
-  { href: "/handlekurv", label: "Handlekurv", Icon: IoCart },
 ];
 
 const focusClassName =
@@ -253,6 +253,8 @@ export default function Navbar() {
                 <Icon aria-hidden="true" className="size-6" />
               </Link>
             ))}
+
+            <Cart />
 
             <button
               ref={menuButtonRef}
