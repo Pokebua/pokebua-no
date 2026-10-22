@@ -48,14 +48,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [desktopProductsOpen, setDesktopProductsOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
 
   const menuButtonRef = useRef(null);
   const desktopProductsRef = useRef(null);
   const desktopProductsButtonRef = useRef(null);
   const mobileProductsButtonRef = useRef(null);
-  const searchButtonRef = useRef(null);
-  const searchInputRef = useRef(null);
 
   const pathname = usePathname();
 
@@ -75,12 +72,6 @@ export default function Navbar() {
     };
   }, [desktopProductsOpen]);
 
-  useEffect(() => {
-    if (searchOpen) {
-      searchInputRef.current?.focus();
-    }
-  }, [searchOpen]);
-
   function isActive(href) {
     return href === "/"
       ? pathname === "/"
@@ -93,21 +84,10 @@ export default function Navbar() {
     setMobileProductsOpen(false);
   }
 
-  function closeSearch() {
-    setSearchOpen(false);
-
-    requestAnimationFrame(() => {
-      searchButtonRef.current?.focus();
-    });
-  }
-
   function handleEscape(event) {
     if (event.key !== "Escape") return;
 
-    if (searchOpen) {
-      event.preventDefault();
-      closeSearch();
-    } else if (desktopProductsOpen) {
+    if (desktopProductsOpen) {
       event.preventDefault();
       setDesktopProductsOpen(false);
       desktopProductsButtonRef.current?.focus();
@@ -295,44 +275,6 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-
-        {searchOpen && (
-          <div
-            id="search-panel"
-            className="border-t border-[#f7b900]/25 px-4 py-5 sm:px-8"
-          >
-            <div className="mx-auto max-w-3xl">
-              <div className="flex items-start justify-between gap-4">
-                <label
-                  htmlFor="navbar-search"
-                  className="font-semibold text-[#f7b900]"
-                >
-                  Søk etter produkter
-                </label>
-
-                <button
-                  type="button"
-                  aria-label="Lukk søk"
-                  onClick={closeSearch}
-                  className={iconClassName}
-                >
-                  <IoClose aria-hidden="true" className="size-6" />
-                </button>
-              </div>
-
-              <input
-                ref={searchInputRef}
-                id="navbar-search"
-                type="search"
-                className="mt-3 min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016]"
-              />
-
-              <p className="mt-3 text-sm">
-                Skriv inn et produktnavn for å søke
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Mobile navigation */}
         <div
