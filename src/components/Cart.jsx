@@ -7,9 +7,11 @@ export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const cartRef = useRef(null);
 
   useEffect(() => {
     if (!isOpen) return;
+
     closeButtonRef.current?.focus();
 
     function handleEscape(event) {
@@ -22,12 +24,31 @@ export default function Cart() {
     }
 
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handleClickOutside(event) {
+      if (cartRef.current && !cartRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    };
   }, [isOpen]);
 
   const focusClassName =
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
-  const iconClassName = `grid size-11 shrink-0 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
+  const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
   function closeCart() {
     setIsOpen(false);
@@ -35,7 +56,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="relative shrink-0">
+    <div ref={cartRef} className="relative shrink-0">
       <button
         ref={triggerRef}
         type="button"
@@ -51,7 +72,7 @@ export default function Cart() {
       {isOpen && (
         <div
           id="cart-panel"
-          className="absolute right-0 top-full z-50 w-[min(24rem,calc(100vw-2rem))] border-t border-[#f7b900]/25 bg-[#001016] px-4 py-5 shadow-xl sm:px-6"
+          className="absolute right-0 top-full z-50 w-[min(24rem,calc(100vw-2rem))] max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-20 max-sm:w-auto border border-white/25 bg-[#001016] px-4 py-5 shadow-xl sm:px-6"
         >
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-xl font-semibold text-[#f7b900]">Handlekurv</h2>
