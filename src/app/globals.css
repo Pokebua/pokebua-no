@@ -39,3 +39,9 @@ body {
     @apply font-saira font-normal;
   }
 }
+/* Hide native clear button; custom accessible button is used instead */
+@layer base {
+  input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+  }
+}
