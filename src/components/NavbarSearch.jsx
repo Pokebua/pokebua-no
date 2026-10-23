@@ -7,10 +7,11 @@ import { IoIosSearch } from "react-icons/io";
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
 
-const iconClassName = `grid size-11 shrink-0 place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
+const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
 export default function NavbarSearch() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -29,6 +30,11 @@ export default function NavbarSearch() {
     });
   }
 
+  function clearSearch() {
+    setSearchValue("");
+    searchInputRef.current?.focus();
+  }
+
   function handleEscape(event) {
     if (event.key === "Escape" && searchOpen) {
       event.preventDefault();
@@ -44,7 +50,13 @@ export default function NavbarSearch() {
         aria-label={searchOpen ? "Lukk søk" : "Søk"}
         aria-expanded={searchOpen}
         aria-controls="search-panel"
-        onClick={() => setSearchOpen((previous) => !previous)}
+        onClick={() => {
+          if (searchOpen) {
+            closeSearch();
+          } else {
+            setSearchOpen(true);
+          }
+        }}
         className={iconClassName}
       >
         <IoIosSearch aria-hidden="true" className="size-6" />
@@ -57,32 +69,51 @@ export default function NavbarSearch() {
           className="absolute left-0 top-full w-full border-t border-[#f7b900]/25 bg-[#001016] px-4 py-5 sm:px-8"
         >
           <div className="mx-auto max-w-3xl">
-            <div className="flex items-start justify-between gap-4">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4">
               <label
                 htmlFor="navbar-search"
-                className="font-semibold text-[#f7b900]"
+                className="col-start-1 row-start-1 font-semibold text-[#f7b900]"
               >
                 Søk etter produkter
               </label>
+
+              <div className="relative col-start-1 row-start-2 mt-3 min-w-0">
+                <input
+                  ref={searchInputRef}
+                  id="navbar-search"
+                  type="search"
+                  value={searchValue}
+                  onChange={(event) => setSearchValue(event.target.value)}
+                  placeholder="Søk etter produkter..."
+                  aria-describedby="navbar-search-help"
+                  className="min-h-11 w-full rounded-md bg-white px-4 py-3 pr-12 text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
+                />
+
+                {searchValue && (
+                  <button
+                    type="button"
+                    aria-label="Tøm søkefelt"
+                    onClick={clearSearch}
+                    className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-[#6b7280] hover:text-[#374151] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
+                  >
+                    <IoClose aria-hidden="true" className="size-6" />
+                  </button>
+                )}
+              </div>
 
               <button
                 type="button"
                 aria-label="Lukk søk"
                 onClick={closeSearch}
-                className={iconClassName}
+                className={`${iconClassName} col-start-2 row-start-1`}
               >
                 <IoClose aria-hidden="true" className="size-6" />
               </button>
             </div>
 
-            <input
-              ref={searchInputRef}
-              id="navbar-search"
-              type="search"
-              className="mt-3 min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016]"
-            />
-
-            <p className="mt-3 text-sm">Skriv inn et produktnavn for å søke</p>
+            <p id="navbar-search-help" className="mt-3 text-sm">
+              Skriv inn et produktnavn for å søke
+            </p>
           </div>
         </div>
       )}
