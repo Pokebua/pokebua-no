@@ -5,10 +5,10 @@ import { searchProducts } from "@/services/productSearch";
 
 export default function useProductSearch(value, enabled = true) {
   const query = value.trim().toLowerCase();
-  const [result, setResult] = useState({
-    query: "",
-    products: [],
-  });
+  const hasQuery = query.length > 0;
+
+  const [attempt, setAttempt] = useState(0);
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
     if (!enabled || !query) return;
@@ -20,12 +20,23 @@ export default function useProductSearch(value, enabled = true) {
         const products = await searchProducts(query);
 
         if (!ignore) {
-          setResult({ query, products });
+          setResult({
+            query,
+            attempt,
+            products,
+            error: null,
+          });
         }
       } catch (error) {
         if (!ignore) {
-          setResult({ query, products: [] });
           console.error("Product search failed:", error);
+
+          setResult({
+            query,
+            attempt,
+            products: [],
+            error: "Kunne ikke hente søkeresultater. Prøv igjen.",
+          });
         }
       }
     }
@@ -35,15 +46,25 @@ export default function useProductSearch(value, enabled = true) {
     return () => {
       ignore = true;
     };
-  }, [query, enabled]);
+  }, [query, enabled, attempt]);
 
-  // Never display results belonging to a different query.
-  const matches =
-    enabled && query && result.query === query ? result.products : [];
+  const isCurrent = result?.query === query && result?.attempt === attempt;
+
+  const isPending = enabled && hasQuery && !isCurrent;
+
+  const matches = enabled && hasQuery && isCurrent ? result.products : [];
+
+  const error = enabled && hasQuery && isCurrent ? result.error : null;
+
+  function retry() {
+    setAttempt((previous) => previous + 1);
+  }
 
   return {
     matches,
-    hasQuery: query.length > 0,
-    isPending: enabled && query.length > 0 && result.query !== query,
+    hasQuery,
+    isPending,
+    error,
+    retry,
   };
 }

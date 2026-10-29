@@ -3,13 +3,15 @@
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import useProductSearch from "@/hooks/useProductSearch";
+import SearchFeedback from "@/components/search/SearchFeedback";
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
   const searchValue = searchParams.get("q") ?? "";
   const query = searchValue.trim();
 
-  const { matches, hasQuery, isPending } = useProductSearch(searchValue);
+  const { matches, hasQuery, isPending, error, retry } =
+    useProductSearch(searchValue);
 
   function handleSearchChange(event) {
     const value = event.target.value;
@@ -56,29 +58,28 @@ export default function SearchResults() {
         />
       </form>
 
-      {!hasQuery ? (
+      {!hasQuery && (
         <p id="results-search-help" className="mt-4">
           Skriv inn et produktnavn for å søke.
         </p>
-      ) : (
-        !isPending && (
-          <>
-            <p className="mt-4">
-              {matches.length}{" "}
-              {matches.length === 1 ? "produkt funnet" : "produkter funnet"}
-            </p>
+      )}
 
-            {matches.length > 0 && (
-              <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {matches.map((product) => (
-                  <li key={product.id} className="min-w-0">
-                    <ProductCard product={product} />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
-        )
+      <SearchFeedback
+        hasQuery={hasQuery}
+        isPending={isPending}
+        error={error}
+        count={matches.length}
+        onRetry={retry}
+      />
+
+      {hasQuery && !isPending && !error && matches.length > 0 && (
+        <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {matches.map((product) => (
+            <li key={product.id} className="min-w-0">
+              <ProductCard product={product} />
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   );
