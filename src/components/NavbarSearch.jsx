@@ -15,6 +15,7 @@ export default function NavbarSearch() {
 
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
+  const searchPanelRef = useRef(null);
 
   useEffect(() => {
     if (searchOpen) {
@@ -30,17 +31,31 @@ export default function NavbarSearch() {
     });
   }
 
-  function clearSearch() {
-    setSearchValue("");
-    searchInputRef.current?.focus();
-  }
-
   function handleEscape(event) {
     if (event.key === "Escape" && searchOpen) {
       event.preventDefault();
       closeSearch();
     }
   }
+
+  useEffect(() => {
+    if (!searchOpen) return;
+
+    function handleClickOutside(event) {
+      if (
+        !searchPanelRef.current?.contains(event.target) &&
+        !searchButtonRef.current?.contains(event.target)
+      ) {
+        setSearchOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    };
+  }, [searchOpen]);
 
   return (
     <>
@@ -64,6 +79,7 @@ export default function NavbarSearch() {
 
       {searchOpen && (
         <div
+          ref={searchPanelRef}
           id="search-panel"
           onKeyDown={handleEscape}
           className="absolute left-0 top-full w-full border-t border-[#f7b900]/25 bg-[#001016] px-4 py-5 sm:px-8"
@@ -77,7 +93,7 @@ export default function NavbarSearch() {
                 Søk etter produkter
               </label>
 
-              <div className="relative col-start-1 row-start-2 mt-3 min-w-0">
+              <div className="relative col-span-2 col-start-1 row-start-2 mt-3 min-w-0">
                 <input
                   ref={searchInputRef}
                   id="navbar-search"
@@ -86,19 +102,8 @@ export default function NavbarSearch() {
                   onChange={(event) => setSearchValue(event.target.value)}
                   placeholder="Søk etter produkter..."
                   aria-describedby="navbar-search-help"
-                  className="min-h-11 w-full rounded-md bg-white px-4 py-3 pr-12 text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
+                  className="min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
                 />
-
-                {searchValue && (
-                  <button
-                    type="button"
-                    aria-label="Tøm søkefelt"
-                    onClick={clearSearch}
-                    className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-[#6b7280] hover:text-[#374151] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
-                  >
-                    <IoClose aria-hidden="true" className="size-6" />
-                  </button>
-                )}
               </div>
 
               <button
