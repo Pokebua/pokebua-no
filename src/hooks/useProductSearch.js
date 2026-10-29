@@ -8,21 +8,34 @@ export default function useProductSearch(value, enabled = true) {
   const hasQuery = query.length > 0;
 
   const [attempt, setAttempt] = useState(0);
+  const [request, setRequest] = useState({
+    query,
+    enabled,
+    attempt,
+  });
   const [result, setResult] = useState(null);
 
+  // Each change starts a separate search, even when returning to an old query.
+  if (
+    request.query !== query ||
+    request.enabled !== enabled ||
+    request.attempt !== attempt
+  ) {
+    setRequest({ query, enabled, attempt });
+  }
+
   useEffect(() => {
-    if (!enabled || !query) return;
+    if (!request.enabled || !request.query) return;
 
     let ignore = false;
 
     async function findMatches() {
       try {
-        const products = await searchProducts(query);
+        const products = await searchProducts(request.query);
 
         if (!ignore) {
           setResult({
-            query,
-            attempt,
+            request,
             products,
             error: null,
           });
@@ -32,8 +45,7 @@ export default function useProductSearch(value, enabled = true) {
           console.error("Product search failed:", error);
 
           setResult({
-            query,
-            attempt,
+            request,
             products: [],
             error: "Kunne ikke hente søkeresultater. Prøv igjen.",
           });
@@ -46,14 +58,11 @@ export default function useProductSearch(value, enabled = true) {
     return () => {
       ignore = true;
     };
-  }, [query, enabled, attempt]);
+  }, [request]);
 
-  const isCurrent = result?.query === query && result?.attempt === attempt;
-
+  const isCurrent = result?.request === request;
   const isPending = enabled && hasQuery && !isCurrent;
-
   const matches = enabled && hasQuery && isCurrent ? result.products : [];
-
   const error = enabled && hasQuery && isCurrent ? result.error : null;
 
   function retry() {

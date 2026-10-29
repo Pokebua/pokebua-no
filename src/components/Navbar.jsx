@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AiFillTikTok } from "react-icons/ai";
@@ -33,9 +33,7 @@ const socialLinks = [
   },
 ];
 
-const accountLinks = [
-  { href: "/konto", label: "Min konto", Icon: CgProfile },
-];
+const accountLinks = [{ href: "/konto", label: "Min konto", Icon: CgProfile }];
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
@@ -53,6 +51,32 @@ export default function Navbar() {
   const desktopProductsRef = useRef(null);
   const desktopProductsButtonRef = useRef(null);
   const mobileProductsButtonRef = useRef(null);
+  const [activePanel, setActivePanel] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
+
+  const setSearchOpen = useCallback((open) => {
+    if (open) {
+      setActivePanel("search");
+      setMenuOpen(false);
+      setDesktopProductsOpen(false);
+      setMobileProductsOpen(false);
+    } else {
+      setActivePanel((current) => (current === "search" ? null : current));
+      setSearchValue("");
+    }
+  }, []);
+
+  const setCartOpen = useCallback((open) => {
+    if (open) {
+      setActivePanel("cart");
+      setSearchValue("");
+      setMenuOpen(false);
+      setDesktopProductsOpen(false);
+      setMobileProductsOpen(false);
+    } else {
+      setActivePanel((current) => (current === "cart" ? null : current));
+    }
+  }, []);
 
   const pathname = usePathname();
 
@@ -82,6 +106,8 @@ export default function Navbar() {
     setMenuOpen(false);
     setDesktopProductsOpen(false);
     setMobileProductsOpen(false);
+    setActivePanel(null);
+    setSearchValue("");
   }
 
   function handleEscape(event) {
@@ -160,6 +186,9 @@ export default function Navbar() {
         aria-expanded={open}
         aria-controls={mobile ? "mobile-products" : "desktop-products"}
         onClick={() => {
+          setActivePanel(null);
+          setSearchValue("");
+
           if (mobile) {
             setMobileProductsOpen((previous) => !previous);
           } else {
@@ -240,7 +269,12 @@ export default function Navbar() {
 
           {/* Account actions and mobile menu button */}
           <div className="flex items-center justify-self-end sm:gap-1">
-            <NavbarSearch />
+            <NavbarSearch
+              searchOpen={activePanel === "search"}
+              setSearchOpen={setSearchOpen}
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
+            />
 
             {accountLinks.map(({ href, label, Icon }) => (
               <Link
@@ -254,7 +288,7 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Cart />
+            <Cart isOpen={activePanel === "cart"} setIsOpen={setCartOpen} />
 
             <button
               ref={menuButtonRef}
@@ -266,6 +300,8 @@ export default function Navbar() {
                 setMenuOpen((previous) => !previous);
                 setMobileProductsOpen(false);
                 setDesktopProductsOpen(false);
+                setActivePanel(null);
+                setSearchValue("");
               }}
               className={`${iconClassName} lg:hidden`}
             >
