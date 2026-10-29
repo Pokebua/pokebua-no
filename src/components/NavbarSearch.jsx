@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
@@ -16,13 +16,17 @@ const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center r
 
 const SUGGESTION_LIMIT = 5;
 
-export default function NavbarSearch() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+export default function NavbarSearch({
+  searchOpen,
+  setSearchOpen,
+  searchValue,
+  setSearchValue,
+}) {
   const { matches, hasQuery, isPending, error, retry } = useProductSearch(
     searchValue,
     searchOpen,
   );
+
   const totalMatches = matches.length;
   const suggestions = matches.slice(0, SUGGESTION_LIMIT);
 
@@ -39,41 +43,6 @@ export default function NavbarSearch() {
       searchInputRef.current?.focus();
     }
   }, [searchOpen]);
-
-  function closeSearch() {
-    setSearchOpen(false);
-
-    requestAnimationFrame(() => {
-      searchButtonRef.current?.focus();
-    });
-  }
-
-  function handleEscape(event) {
-    if (event.key === "Escape" && searchOpen) {
-      event.preventDefault();
-      closeSearch();
-    }
-  }
-
-  function handleSearchBlur(event) {
-    const nextTarget = event.relatedTarget;
-
-    if (
-      !searchPanelRef.current?.contains(nextTarget) &&
-      !searchButtonRef.current?.contains(nextTarget)
-    ) {
-      setSearchOpen(false);
-    }
-  }
-
-  function handleSearchSubmit(event) {
-    event.preventDefault();
-
-    if (!query) return;
-
-    setSearchOpen(false);
-    router.push(resultsHref);
-  }
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -92,17 +61,64 @@ export default function NavbarSearch() {
     return () => {
       document.removeEventListener("pointerdown", handleClickOutside);
     };
-  }, [searchOpen]);
+  }, [searchOpen, setSearchOpen]);
+
+  function closeSearch() {
+    setSearchOpen(false);
+    searchButtonRef.current?.focus();
+  }
+
+  function clearSearch() {
+    searchInputRef.current?.focus();
+    setSearchValue("");
+  }
+
+  function handleEscape(event) {
+    if (event.key === "Escape" && searchOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeSearch();
+    }
+  }
+
+  function handleSearchBlur(event) {
+    const nextTarget = event.relatedTarget;
+
+    // Outside pointer interactions are handled separately.
+    if (!nextTarget) return;
+
+    if (
+      !searchPanelRef.current?.contains(nextTarget) &&
+      !searchButtonRef.current?.contains(nextTarget)
+    ) {
+      setSearchOpen(false);
+    }
+  }
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+
+    if (!query) return;
+
+    setSearchOpen(false);
+    router.push(resultsHref);
+  }
+
+  function handleRetry() {
+    searchInputRef.current?.focus();
+    retry();
+  }
 
   return (
     <>
       <button
         ref={searchButtonRef}
-        onBlur={handleSearchBlur}
         type="button"
         aria-label={searchOpen ? "Lukk søk" : "Søk"}
         aria-expanded={searchOpen}
         aria-controls="search-panel"
+        onBlur={handleSearchBlur}
+        onKeyDown={handleEscape}
         onClick={() => {
           if (searchOpen) {
             closeSearch();
@@ -151,6 +167,16 @@ export default function NavbarSearch() {
                   }
                   className="min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
                 />
+
+                {searchValue.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className={`mt-3 inline-flex min-h-11 cursor-pointer items-center rounded-md px-3 text-sm font-semibold text-[#f7b900] hover:bg-[#f7b900]/10 ${focusClassName}`}
+                  >
+                    Tøm søk
+                  </button>
+                )}
               </div>
 
               <button
@@ -174,7 +200,7 @@ export default function NavbarSearch() {
               isPending={isPending}
               error={error}
               count={totalMatches}
-              onRetry={retry}
+              onRetry={handleRetry}
               dark
             />
 
