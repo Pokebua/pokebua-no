@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 
 function ProductDetail({ product }) {
   return (
@@ -22,20 +23,19 @@ function ProductDetail({ product }) {
           </p>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+        <div className="mt-8 grid grid-cols-1 items-start gap-4 sm:grid-cols-[auto_minmax(0,1fr)]">
           <button
             type="button"
-            className="rounded-lg border-3 bg-black cursor-pointer transition-transform hover:scale-105 border-yellow-400 px-6 py-3 font-semibold text-white"
+            className="min-h-11 cursor-pointer whitespace-nowrap rounded-lg border-3 border-yellow-400 bg-black px-6 py-3 font-semibold text-white transition-colors hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
           >
             Kjøp Nå
           </button>
 
-          <button
-            type="button"
-            className="rounded-lg border-3 bg-black cursor-pointer transition-transform hover:scale-105 border-yellow-400 px-6 py-3 font-semibold text-white"
-          >
-            Legg i handlekurv
-          </button>
+          <AddToCartButton
+            key={product.id}
+            productId={product.id}
+            productName={product.name}
+          />
         </div>
       </div>
     </section>
