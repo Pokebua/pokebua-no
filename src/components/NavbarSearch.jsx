@@ -45,6 +45,17 @@ export default function NavbarSearch() {
     }
   }
 
+  function handleSearchBlur(event) {
+    const nextTarget = event.relatedTarget;
+
+    if (
+      !searchPanelRef.current?.contains(nextTarget) &&
+      !searchButtonRef.current?.contains(nextTarget)
+    ) {
+      setSearchOpen(false);
+    }
+  }
+
   useEffect(() => {
     if (!searchOpen) return;
 
@@ -68,6 +79,7 @@ export default function NavbarSearch() {
     <>
       <button
         ref={searchButtonRef}
+        onBlur={handleSearchBlur}
         type="button"
         aria-label={searchOpen ? "Lukk søk" : "Søk"}
         aria-expanded={searchOpen}
@@ -89,6 +101,7 @@ export default function NavbarSearch() {
           ref={searchPanelRef}
           id="search-panel"
           onKeyDown={handleEscape}
+          onBlur={handleSearchBlur}
           className="absolute left-0 top-full z-50 max-h-[75dvh] w-full overflow-y-auto border-t border-[#f7b900]/25 bg-[#001016] shadow-xl"
         >
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8">
