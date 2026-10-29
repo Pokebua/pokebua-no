@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
+import useProductSearch from "@/hooks/useProductSearch";
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
@@ -12,6 +13,7 @@ const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center r
 export default function NavbarSearch() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const { matches, hasQuery } = useProductSearch(searchValue, searchOpen);
 
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -98,10 +100,13 @@ export default function NavbarSearch() {
                   ref={searchInputRef}
                   id="navbar-search"
                   type="search"
+                  autoComplete="off"
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
                   placeholder="Søk etter produkter..."
-                  aria-describedby="navbar-search-help"
+                  aria-describedby={
+                    !hasQuery ? "navbar-search-help" : undefined
+                  }
                   className="min-h-11 w-full rounded-md bg-white px-4 py-3 text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]"
                 />
               </div>
@@ -116,9 +121,21 @@ export default function NavbarSearch() {
               </button>
             </div>
 
-            <p id="navbar-search-help" className="mt-3 text-sm">
-              Skriv inn et produktnavn for å søke
-            </p>
+            {!hasQuery ? (
+              <p id="navbar-search-help" className="mt-3 text-sm">
+                Skriv inn et produktnavn for å søke
+              </p>
+            ) : (
+              matches.length > 0 && (
+                <ul className="mt-4 max-h-64 space-y-2 overflow-y-auto text-sm text-white">
+                  {matches.map((product) => (
+                    <li key={product.id} className="wrap-break-word">
+                      {product.name}
+                    </li>
+                  ))}
+                </ul>
+              )
+            )}
           </div>
         </div>
       )}
