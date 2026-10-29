@@ -56,7 +56,15 @@ export default function Cart() {
   }
 
   return (
-    <div ref={cartRef} className="relative shrink-0">
+    <div
+      ref={cartRef}
+      className="static shrink-0 lg:relative"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setIsOpen(false);
+        }
+      }}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -68,11 +76,10 @@ export default function Cart() {
       >
         <IoCart aria-hidden="true" className="size-6" />
       </button>
-
       {isOpen && (
         <div
           id="cart-panel"
-          className="absolute right-0 top-full z-50 w-[min(24rem,calc(100vw-2rem))] max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:top-20 max-sm:w-auto border border-white/25 bg-[#001016] px-4 py-5 shadow-xl sm:px-6"
+          className="absolute right-0 top-full z-50 w-96 max-w-full border border-white/25 bg-[#001016] px-4 py-5 shadow-xl lg:max-w-none lg:px-6"
         >
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-xl font-semibold text-[#f7b900]">Handlekurv</h2>
