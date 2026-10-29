@@ -2,6 +2,7 @@
 
 import { createContext, useRef, useState } from "react";
 import { addCartItem } from "@/services/mockCart";
+import { toOre } from "@/utils/currency";
 
 export const CartContext = createContext(null);
 
@@ -25,8 +26,15 @@ export default function CartProvider({ children }) {
     return operation;
   }
 
+  const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
+
+  const subtotalInOre = lines.reduce(
+    (total, line) => total + toOre(line.product.price) * line.quantity,
+    0,
+  );
+
   return (
-    <CartContext.Provider value={{ lines, addItem }}>
+    <CartContext.Provider value={{ lines, addItem, itemCount, subtotalInOre }}>
       {children}
     </CartContext.Provider>
   );
