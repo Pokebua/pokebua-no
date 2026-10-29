@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import useCart from "@/hooks/useCart";
+import CartItem from "@/components/cart/CartItem";
 import { IoCart, IoClose } from "react-icons/io5";
 
 const focusClassName =
@@ -9,6 +11,7 @@ const focusClassName =
 const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
 export default function Cart({ isOpen, setIsOpen }) {
+  const { lines } = useCart();
   const triggerRef = useRef(null);
   const closeButtonRef = useRef(null);
   const cartRef = useRef(null);
@@ -64,7 +67,7 @@ export default function Cart({ isOpen, setIsOpen }) {
       ref={cartRef}
       onKeyDown={handleEscape}
       onBlur={handleCartBlur}
-      className="static shrink-0 lg:relative"
+      className="static shrink-0 xl:relative"
     >
       <button
         ref={triggerRef}
@@ -110,7 +113,15 @@ export default function Cart({ isOpen, setIsOpen }) {
             </button>
           </div>
 
-          <p className="mt-6 text-sm text-white">Handlekurven din er tom.</p>
+          {lines.length === 0 ? (
+            <p className="mt-6 text-sm text-white">Handlekurven din er tom.</p>
+          ) : (
+            <ul aria-label="Produkter i handlekurven" className="mt-4">
+              {lines.map((line) => (
+                <CartItem key={line.id} line={line} />
+              ))}
+            </ul>
+          )}
         </div>
       )}
     </div>
