@@ -4,16 +4,21 @@ import { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
 import useProductSearch from "@/hooks/useProductSearch";
+import ProductSuggestion from "@/components/search/ProductSuggestion";
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
 
 const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
+const SUGGESTION_LIMIT = 5;
+
 export default function NavbarSearch() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const { matches, hasQuery } = useProductSearch(searchValue, searchOpen);
+  const totalMatches = matches.length;
+  const suggestions = matches.slice(0, SUGGESTION_LIMIT);
 
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -84,9 +89,9 @@ export default function NavbarSearch() {
           ref={searchPanelRef}
           id="search-panel"
           onKeyDown={handleEscape}
-          className="absolute left-0 top-full w-full border-t border-[#f7b900]/25 bg-[#001016] px-4 py-5 sm:px-8"
+          className="absolute left-0 top-full z-50 max-h-[75dvh] w-full overflow-y-auto border-t border-[#f7b900]/25 bg-[#001016] shadow-xl"
         >
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4">
               <label
                 htmlFor="navbar-search"
@@ -95,7 +100,7 @@ export default function NavbarSearch() {
                 Søk etter produkter
               </label>
 
-              <div className="relative col-span-2 col-start-1 row-start-2 mt-3 min-w-0">
+              <div className="col-span-2 col-start-1 row-start-2 mt-3 min-w-0">
                 <input
                   ref={searchInputRef}
                   id="navbar-search"
@@ -126,14 +131,29 @@ export default function NavbarSearch() {
                 Skriv inn et produktnavn for å søke
               </p>
             ) : (
-              matches.length > 0 && (
-                <ul className="mt-4 max-h-64 space-y-2 overflow-y-auto text-sm text-white">
-                  {matches.map((product) => (
-                    <li key={product.id} className="wrap-break-word">
-                      {product.name}
-                    </li>
-                  ))}
-                </ul>
+              totalMatches > 0 && (
+                <section
+                  aria-labelledby="navbar-suggestions-heading"
+                  className="mt-6"
+                >
+                  <h2
+                    id="navbar-suggestions-heading"
+                    className="border-b border-[#f7b900]/25 pb-3 text-base text-[#f7b900]"
+                  >
+                    Produkter
+                  </h2>
+
+                  <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 p-1 sm:grid-cols-3 lg:grid-cols-5">
+                    {suggestions.map((product) => (
+                      <li key={product.id} className="min-w-0">
+                        <ProductSuggestion
+                          product={product}
+                          onSelect={() => setSearchOpen(false)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               )
             )}
           </div>
