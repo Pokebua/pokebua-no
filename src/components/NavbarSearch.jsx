@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
 import useProductSearch from "@/hooks/useProductSearch";
@@ -23,6 +25,10 @@ export default function NavbarSearch() {
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
   const searchPanelRef = useRef(null);
+
+  const router = useRouter();
+  const query = searchValue.trim();
+  const resultsHref = `/sok?${new URLSearchParams({ q: query }).toString()}`;
 
   useEffect(() => {
     if (searchOpen) {
@@ -54,6 +60,15 @@ export default function NavbarSearch() {
     ) {
       setSearchOpen(false);
     }
+  }
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+
+    if (!query) return;
+
+    setSearchOpen(false);
+    router.push(resultsHref);
   }
 
   useEffect(() => {
@@ -105,7 +120,12 @@ export default function NavbarSearch() {
           className="absolute left-0 top-full z-50 max-h-[75dvh] w-full overflow-y-auto border-t border-[#f7b900]/25 bg-[#001016] shadow-xl"
         >
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4">
+            <form
+              role="search"
+              aria-label="Produktsøk"
+              onSubmit={handleSearchSubmit}
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4"
+            >
               <label
                 htmlFor="navbar-search"
                 className="col-start-1 row-start-1 font-semibold text-[#f7b900]"
@@ -137,7 +157,7 @@ export default function NavbarSearch() {
               >
                 <IoClose aria-hidden="true" className="size-6" />
               </button>
-            </div>
+            </form>
 
             {!hasQuery ? (
               <p id="navbar-search-help" className="mt-3 text-sm">
@@ -166,6 +186,15 @@ export default function NavbarSearch() {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-6 flex justify-center">
+                    <Link
+                      href={resultsHref}
+                      onClick={() => setSearchOpen(false)}
+                      className={`inline-flex min-h-11 items-center justify-center rounded-md bg-[#f7b900] px-5 py-3 text-center text-sm font-semibold text-[#001016] transition-colors hover:bg-[#ffd04a] ${focusClassName}`}
+                    >
+                      Vis alle resultater ({totalMatches})
+                    </Link>
+                  </div>
                 </section>
               )
             )}
