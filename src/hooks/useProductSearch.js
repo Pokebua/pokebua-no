@@ -44,5 +44,6 @@ export default function useProductSearch(value, enabled = true) {
   return {
     matches,
     hasQuery: query.length > 0,
+    isPending: enabled && query.length > 0 && result.query !== query,
   };
 }
