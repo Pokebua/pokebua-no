@@ -219,12 +219,6 @@ export default function Cart({ isOpen, setIsOpen }) {
                     {formatNok(subtotalInOre)}
                   </dd>
                 </dl>
-                <dl className="mt-4 flex flex-wrap items-baseline justify-between gap-3 border-t border-white/25 pt-4 text-white">
-                  <dt className="font-semibold">Delsum</dt>
-                  <dd className="text-lg font-bold text-[#f7b900]">
-                    {formatNok(subtotalInOre)}
-                  </dd>
-                </dl>
 
                 <CheckoutButton />
               </>
