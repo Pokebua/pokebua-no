@@ -92,7 +92,7 @@ export default function ToastViewport() {
     <section
       ref={viewportRef}
       aria-label="Varsler"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:left-auto sm:w-[26rem]"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:left-auto sm:w-104"
     >
       <ul className="pointer-events-auto max-h-[70dvh] space-y-3 overflow-y-auto p-1">
         {toasts.map((toast) => (
