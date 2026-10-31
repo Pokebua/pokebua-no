@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CartProvider from "@/components/cart/CartProvider";
+import ToastProvider from "@/components/toast/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,15 +34,17 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} ${sairaStencil.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <CartProvider>
-          <Navbar />
+        <ToastProvider>
+          <CartProvider>
+            <Navbar />
 
-          <main id="main-content" tabIndex={-1} className="flex-1">
-            {children}
-          </main>
+            <main id="main-content" tabIndex={-1} className="flex-1">
+              {children}
+            </main>
 
-          <Footer />
-        </CartProvider>
+            <Footer />
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );
