@@ -2,15 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatNok, toOre } from "@/utils/currency";
 import CartQuantityControls from "@/components/cart/CartQuantityControls";
+import RemoveCartItemButton from "@/components/cart/RemoveCartItemButton";
 
-export default function CartItem({ line, onSelect }) {
+export default function CartItem({ line, onSelect, onRemove, removingLineId }) {
   const { product, quantity } = line;
 
   const unitPriceInOre = toOre(product.price);
   const lineTotalInOre = unitPriceInOre * quantity;
 
   return (
-    <li className="grid grid-cols-[5rem_minmax(0,1fr)] gap-4 border-b border-white/20 py-4 last:border-b-0">
+    <li
+      data-cart-line-id={line.id}
+      className="grid grid-cols-[5rem_minmax(0,1fr)] gap-4 border-b border-white/20 py-4 last:border-b-0"
+    >
       <Link
         href={`/produkter/${product.category}/${product.id}`}
         onClick={onSelect}
@@ -26,7 +30,6 @@ export default function CartItem({ line, onSelect }) {
           className="object-cover object-center"
         />
       </Link>
-
       <div className="min-w-0 text-white">
         <h3 className="wrap-break-word font-sans text-base font-semibold">
           <Link
@@ -46,6 +49,13 @@ export default function CartItem({ line, onSelect }) {
           lineId={line.id}
           productName={product.name}
           quantity={quantity}
+        />
+
+        <RemoveCartItemButton
+          productName={product.name}
+          isPending={removingLineId === line.id}
+          unavailable={removingLineId !== null}
+          onRemove={(button) => onRemove(line.id, button)}
         />
 
         <p className="mt-2 text-sm font-semibold text-[#f7b900]">
