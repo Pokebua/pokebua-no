@@ -1,11 +1,13 @@
 "use client";
 
-import { createContext, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import {
   addCartItem,
   changeCartItemQuantity,
   removeCartItem,
+  restoreCartItems,
 } from "@/services/mockCart";
+import { readSavedCart, saveCart } from "@/services/cartStorage";
 import { toOre } from "@/utils/currency";
 
 export const CartContext = createContext(null);
@@ -15,13 +17,40 @@ export default function CartProvider({ children }) {
 
   const linesRef = useRef([]);
   const queueRef = useRef(Promise.resolve());
+  const restorationRef = useRef(null);
+
+  const ensureRestored = useCallback(() => {
+    if (!restorationRef.current) {
+      restorationRef.current = Promise.resolve()
+        .then(() => restoreCartItems(readSavedCart()))
+        .catch((error) => {
+          console.warn("Could not restore cart:", error);
+          return [];
+        })
+        .then((restoredLines) => {
+          linesRef.current = restoredLines;
+          setLines(restoredLines);
+
+          return restoredLines;
+        });
+    }
+
+    return restorationRef.current;
+  }, []);
+
+  useEffect(() => {
+    void ensureRestored();
+  }, [ensureRestored]);
 
   function enqueueOperation(updateCart) {
     const operation = queueRef.current.then(async () => {
+      await ensureRestored();
+
       const nextLines = await updateCart(linesRef.current);
 
       linesRef.current = nextLines;
       setLines(nextLines);
+      saveCart(nextLines);
 
       return nextLines;
     });

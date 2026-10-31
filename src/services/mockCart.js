@@ -61,3 +61,63 @@ export async function removeCartItem(lines, lineId) {
 
   return lines.filter((line) => line.id !== lineId);
 }
+
+export async function restoreCartItems(savedLines) {
+  if (!Array.isArray(savedLines)) return [];
+
+  const restoredLines = [];
+  const usedLineIds = new Set();
+  const usedVariantIds = new Set();
+
+  for (const savedLine of savedLines) {
+    if (!savedLine || typeof savedLine !== "object") continue;
+
+    const { id, productId, variantId, quantity } = savedLine;
+
+    const validProductId =
+      (typeof productId === "number" &&
+        Number.isSafeInteger(productId) &&
+        productId > 0) ||
+      (typeof productId === "string" && /^[1-9]\d*$/.test(productId));
+
+    if (
+      typeof id !== "string" ||
+      !id.startsWith("mock-line-") ||
+      id.length <= "mock-line-".length ||
+      !validProductId ||
+      typeof variantId !== "string" ||
+      !Number.isSafeInteger(quantity) ||
+      quantity < 1
+    ) {
+      continue;
+    }
+
+    const product = await getProductById(productId);
+
+    // Products removed from the dataset are not restored.
+    if (!product) continue;
+
+    const expectedVariantId = `mock-variant-${product.id}-default`;
+
+    if (
+      variantId !== expectedVariantId ||
+      usedLineIds.has(id) ||
+      usedVariantIds.has(variantId)
+    ) {
+      continue;
+    }
+
+    restoredLines.push({
+      id,
+      productId: product.id,
+      variantId: expectedVariantId,
+      quantity,
+      product,
+    });
+
+    usedLineIds.add(id);
+    usedVariantIds.add(variantId);
+  }
+
+  return restoredLines;
+}
