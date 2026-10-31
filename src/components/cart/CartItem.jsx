@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatNok, toOre } from "@/utils/currency";
+import CartQuantityControls from "@/components/cart/CartQuantityControls";
 
 export default function CartItem({ line, onSelect }) {
   const { product, quantity } = line;
@@ -41,7 +42,11 @@ export default function CartItem({ line, onSelect }) {
           Pris per stk.: {formatNok(unitPriceInOre)}
         </p>
 
-        <p className="mt-1 text-sm">Antall: {quantity}</p>
+        <CartQuantityControls
+          lineId={line.id}
+          productName={product.name}
+          quantity={quantity}
+        />
 
         <p className="mt-2 text-sm font-semibold text-[#f7b900]">
           Sum: {formatNok(lineTotalInOre)}
