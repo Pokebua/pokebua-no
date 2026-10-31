@@ -51,3 +51,13 @@ export async function changeCartItemQuantity(lines, lineId, change) {
     line.id === lineId ? { ...line, quantity: nextQuantity } : line,
   );
 }
+
+export async function removeCartItem(lines, lineId) {
+  const exists = lines.some((line) => line.id === lineId);
+
+  if (!exists) {
+    throw new Error("Varen finnes ikke i handlekurven.");
+  }
+
+  return lines.filter((line) => line.id !== lineId);
+}
