@@ -3,8 +3,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoCart, IoClose } from "react-icons/io5";
 import useCart from "@/hooks/useCart";
-import CartItem from "@/components/cart/CartItem";
 import { formatNok } from "@/utils/currency";
+import CartItem from "@/components/cart/CartItem";
+import CheckoutButton from "@/components/cart/CheckoutButton";
 
 const focusClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f7b900] focus-visible:ring-offset-4 focus-visible:ring-offset-[#001016]";
@@ -218,6 +219,14 @@ export default function Cart({ isOpen, setIsOpen }) {
                     {formatNok(subtotalInOre)}
                   </dd>
                 </dl>
+                <dl className="mt-4 flex flex-wrap items-baseline justify-between gap-3 border-t border-white/25 pt-4 text-white">
+                  <dt className="font-semibold">Delsum</dt>
+                  <dd className="text-lg font-bold text-[#f7b900]">
+                    {formatNok(subtotalInOre)}
+                  </dd>
+                </dl>
+
+                <CheckoutButton />
               </>
             )}
 
