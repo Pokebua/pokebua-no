@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CartProvider from "@/components/cart/CartProvider";
 import ToastProvider from "@/components/toast/ToastProvider";
+import ToastViewport from "@/components/toast/ToastViewport";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
 
             <Footer />
           </CartProvider>
+          <ToastViewport />
         </ToastProvider>
       </body>
     </html>
