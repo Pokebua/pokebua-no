@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useRef, useState } from "react";
-import { addCartItem } from "@/services/mockCart";
+import { addCartItem, changeCartItemQuantity } from "@/services/mockCart";
 import { toOre } from "@/utils/currency";
 
 export const CartContext = createContext(null);
@@ -12,18 +12,32 @@ export default function CartProvider({ children }) {
   const linesRef = useRef([]);
   const queueRef = useRef(Promise.resolve());
 
-  function addItem(productId) {
+  function enqueueOperation(updateCart) {
     const operation = queueRef.current.then(async () => {
-      const nextLines = await addCartItem(linesRef.current, productId);
+      const nextLines = await updateCart(linesRef.current);
 
       linesRef.current = nextLines;
       setLines(nextLines);
+
+      return nextLines;
     });
 
-    // A failed operation must not block subsequent additions.
+    // Failed operations must not block later cart changes.
     queueRef.current = operation.catch(() => {});
 
     return operation;
+  }
+
+  function addItem(productId) {
+    return enqueueOperation((currentLines) =>
+      addCartItem(currentLines, productId),
+    );
+  }
+
+  function changeQuantity(lineId, change) {
+    return enqueueOperation((currentLines) =>
+      changeCartItemQuantity(currentLines, lineId, change),
+    );
   }
 
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
@@ -34,7 +48,15 @@ export default function CartProvider({ children }) {
   );
 
   return (
-    <CartContext.Provider value={{ lines, addItem, itemCount, subtotalInOre }}>
+    <CartContext.Provider
+      value={{
+        lines,
+        addItem,
+        changeQuantity,
+        itemCount,
+        subtotalInOre,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
