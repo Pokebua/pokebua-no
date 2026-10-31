@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoCart, IoClose } from "react-icons/io5";
 import useCart from "@/hooks/useCart";
 import CartItem from "@/components/cart/CartItem";
@@ -12,12 +12,56 @@ const focusClassName =
 const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
 export default function Cart({ isOpen, setIsOpen }) {
-  const { lines, itemCount, subtotalInOre } = useCart();
+  const { lines, itemCount, subtotalInOre, removeItem } = useCart();
 
   const triggerRef = useRef(null);
   const closeButtonRef = useRef(null);
   const cartRef = useRef(null);
   const panelRef = useRef(null);
+
+  const removalPendingRef = useRef(false);
+  const removalFocusRef = useRef(null);
+
+  const [removingLineId, setRemovingLineId] = useState(null);
+  const [removalMessage, setRemovalMessage] = useState("");
+  const [removalError, setRemovalError] = useState("");
+
+  useLayoutEffect(() => {
+    const pendingFocus = removalFocusRef.current;
+
+    if (!pendingFocus) return;
+
+    const itemStillExists = lines.some(
+      (line) => line.id === pendingFocus.lineId,
+    );
+
+    if (itemStillExists) return;
+
+    removalFocusRef.current = null;
+
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const activeElement = document.activeElement;
+
+    // Preserve focus if the user moved to another control while waiting.
+    if (
+      activeElement !== document.body &&
+      activeElement !== pendingFocus.button
+    ) {
+      return;
+    }
+
+    const remainingItems = panel.querySelectorAll("[data-cart-line-id]");
+    const nextItem =
+      remainingItems[Math.min(pendingFocus.index, remainingItems.length - 1)];
+
+    const nextProductLink = nextItem?.querySelector(
+      'a[href]:not([tabindex="-1"])',
+    );
+
+    (nextProductLink ?? closeButtonRef.current)?.focus();
+  }, [lines]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -44,6 +88,35 @@ export default function Cart({ isOpen, setIsOpen }) {
       document.removeEventListener("pointerdown", handleClickOutside);
     };
   }, [isOpen, setIsOpen]);
+
+  async function handleRemove(lineId, button) {
+    if (removalPendingRef.current) return;
+
+    const index = lines.findIndex((line) => line.id === lineId);
+    if (index === -1) return;
+
+    const productName = lines[index].product.name;
+
+    removalPendingRef.current = true;
+    removalFocusRef.current = { lineId, index, button };
+
+    setRemovingLineId(lineId);
+    setRemovalMessage(`Fjerner ${productName}...`);
+    setRemovalError("");
+
+    try {
+      await removeItem(lineId);
+      setRemovalMessage(`${productName} er fjernet fra handlekurven.`);
+    } catch (error) {
+      console.error("Removing cart item failed:", error);
+      removalFocusRef.current = null;
+      setRemovalMessage("");
+      setRemovalError("Kunne ikke fjerne varen. Prøv igjen.");
+    } finally {
+      removalPendingRef.current = false;
+      setRemovingLineId(null);
+    }
+  }
 
   function closeCart() {
     setIsOpen(false);
@@ -133,6 +206,8 @@ export default function Cart({ isOpen, setIsOpen }) {
                       key={line.id}
                       line={line}
                       onSelect={() => setIsOpen(false)}
+                      onRemove={handleRemove}
+                      removingLineId={removingLineId}
                     />
                   ))}
                 </ul>
@@ -145,6 +220,22 @@ export default function Cart({ isOpen, setIsOpen }) {
                 </dl>
               </>
             )}
+
+            <p
+              role="status"
+              aria-atomic="true"
+              className="mt-3 text-sm text-white"
+            >
+              {removalMessage}
+            </p>
+
+            <p
+              role="alert"
+              aria-atomic="true"
+              className="mt-2 text-sm text-red-300"
+            >
+              {removalError}
+            </p>
 
             <button
               ref={closeButtonRef}

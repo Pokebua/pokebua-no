@@ -1,7 +1,11 @@
 "use client";
 
 import { createContext, useRef, useState } from "react";
-import { addCartItem, changeCartItemQuantity } from "@/services/mockCart";
+import {
+  addCartItem,
+  changeCartItemQuantity,
+  removeCartItem,
+} from "@/services/mockCart";
 import { toOre } from "@/utils/currency";
 
 export const CartContext = createContext(null);
@@ -40,6 +44,12 @@ export default function CartProvider({ children }) {
     );
   }
 
+  function removeItem(lineId) {
+    return enqueueOperation((currentLines) =>
+      removeCartItem(currentLines, lineId),
+    );
+  }
+
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
 
   const subtotalInOre = lines.reduce(
@@ -53,6 +63,7 @@ export default function CartProvider({ children }) {
         lines,
         addItem,
         changeQuantity,
+        removeItem,
         itemCount,
         subtotalInOre,
       }}
