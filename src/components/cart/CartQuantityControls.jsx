@@ -88,7 +88,11 @@ export default function CartQuantityControls({
         </button>
       </div>
 
-      <p role="status" aria-atomic="true" className="mt-2 text-sm text-white">
+      <p
+        role="status"
+        aria-atomic="true"
+        className={isPending ? "mt-2 text-sm text-white" : "sr-only"}
+      >
         {isPending ? "Oppdaterer antall..." : message}
       </p>
 
