@@ -1,37 +1,32 @@
 import { notFound } from "next/navigation";
-import ProductCard from "@/components/ProductCard";
-import { productLists, getProductList } from "@/data/products";
+import { getCollectionByHandle } from "@/lib/shopify/collections";
+import ProductListing from "@/components/products/ProductListing";
 
-export function generateStaticParams() {
-  return productLists.map(({ id }) => ({
-    category: id,
-  }));
-}
+export default async function CategoryPage({ params, searchParams }) {
+  const { category } = await params;
+  const parameters = await searchParams;
 
-export default async function CategoryPage({ params }) {
-  const { category: categoryId } = await params;
+  const after =
+    typeof parameters.after === "string" && parameters.after
+      ? parameters.after
+      : null;
 
-  const category = await getProductList(categoryId);
+  const collection = await getCollectionByHandle(category, {
+    first: 24,
+    after,
+  });
 
-  if (!category) {
+  if (!collection) {
     notFound();
   }
-  return (
-    <main className="min-h-screen bg-[#FFF8E6] px-4 py-12 sm:px-8">
-      <section aria-labelledby="category-heading" className="mx-auto max-w-6xl">
-        <h1
-          id="category-heading"
-          className="mb-8 text-3xl font-bold text-[#001016]"
-        >
-          {category.heading}
-        </h1>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {category.products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-    </main>
+  return (
+    <ProductListing
+      title={collection.title}
+      description={collection.description}
+      products={collection.products}
+      basePath={`/produkter/${encodeURIComponent(collection.handle)}`}
+      hasCursor={Boolean(after)}
+    />
   );
 }
