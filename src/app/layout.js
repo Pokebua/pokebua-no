@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Saira_Stencil_One } from "next/font/google";
 
 import "./globals.css";
-import Navbar from "../components/Navbar";
+import Navbar from "@/components/Navbar";
 import Footer from "../components/Footer";
 import CartProvider from "@/components/cart/CartProvider";
 import ToastProvider from "@/components/toast/ToastProvider";
