@@ -2,7 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatMoney } from "@/utils/formatMoney";
 
-export default function ShopifyProductCard({ product }) {
+export default function ShopifyProductCard({
+  product,
+  headingAs: Heading = "h2",
+}) {
   const image = product.featuredImage;
   const { minVariantPrice, maxVariantPrice } = product.priceRange;
 
@@ -32,7 +35,9 @@ export default function ShopifyProductCard({ product }) {
         </div>
 
         <div className="flex flex-1 flex-col p-3 text-white">
-          <h2 className="wrap-break-word text-base">{product.title}</h2>
+          <Heading className="wrap-break-word text-base">
+            {product.title}
+          </Heading>
 
           <p className="mt-4 text-2xl font-bold">
             {hasPriceRange && <span className="text-base">Fra </span>}

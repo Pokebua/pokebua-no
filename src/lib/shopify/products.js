@@ -29,6 +29,27 @@ const variantFields = `
   }
 `;
 
+export async function getNewestProducts({ first = 8 } = {}) {
+  validatePageSize(first);
+
+  const data = await shopifyFetch({
+    query: `
+      ${productCardFragment}
+
+      query NewestProducts($first: Int!) {
+        products(first: $first, sortKey: CREATED_AT, reverse: true) {
+          nodes {
+            ...ProductCardFields
+          }
+        }
+      }
+    `,
+    variables: { first },
+  });
+
+  return data.products.nodes;
+}
+
 export async function getProducts({ first = 24, after = null } = {}) {
   validatePageSize(first);
 
