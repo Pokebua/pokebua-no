@@ -25,15 +25,21 @@ function getShopifyConfig() {
   };
 }
 
-export async function shopifyFetch({ query, variables = {} }) {
+export async function shopifyFetch({ query, variables = {}, buyerIp }) {
   const { endpoint, token } = getShopifyConfig();
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Shopify-Storefront-Private-Token": token,
+  };
+
+  if (buyerIp) {
+    headers["Shopify-Storefront-Buyer-IP"] = buyerIp;
+  }
 
   const response = await fetch(endpoint, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Shopify-Storefront-Private-Token": token,
-    },
+    headers,
     body: JSON.stringify({ query, variables }),
     cache: "no-store",
     signal: AbortSignal.timeout(15000),
