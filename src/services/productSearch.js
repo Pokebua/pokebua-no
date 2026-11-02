@@ -1,17 +1,34 @@
-import { getProducts } from "@/data/products";
+export async function searchProducts(
+  query,
+  { first = 24, page = 1, signal } = {},
+) {
+  const normalizedQuery = query.trim();
 
-/**
- * Searches all test products by name.
- * Returns full product objects for reuse by other search interfaces.
- */
-export async function searchProducts(query) {
-  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) {
+    return {
+      nodes: [],
+      totalCount: 0,
+      pageInfo: {
+        hasNextPage: false,
+        endCursor: null,
+      },
+    };
+  }
 
-  if (!normalizedQuery) return [];
+  const params = new URLSearchParams({
+    q: normalizedQuery,
+    first: String(first),
+    page: String(page),
+  });
 
-  const products = await getProducts();
+  const response = await fetch(`/api/search?${params}`, {
+    signal,
+    cache: "no-store",
+  });
 
-  return products.filter((product) =>
-    product.name.toLowerCase().includes(normalizedQuery),
-  );
+  if (!response.ok) {
+    throw new Error("Kunne ikke hente søkeresultater. Prøv igjen.");
+  }
+
+  return response.json();
 }

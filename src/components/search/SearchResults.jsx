@@ -1,17 +1,35 @@
 "use client";
 
+import { useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import ProductCard from "@/components/ProductCard";
+import ShopifyProductCard from "@/components/products/ShopifyProductCard";
 import useProductSearch from "@/hooks/useProductSearch";
 import SearchFeedback from "@/components/search/SearchFeedback";
+import SearchPagination from "@/components/search/SearchPagination";
+
+const PAGE_SIZE = 24;
+const MAX_PAGE = Math.ceil(1000 / PAGE_SIZE);
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
+  const searchInputRef = useRef(null);
+
   const searchValue = searchParams.get("q") ?? "";
   const query = searchValue.trim();
+  const pageValue = Number(searchParams.get("page") ?? "1");
 
-  const { matches, hasQuery, isPending, error, retry } =
-    useProductSearch(searchValue);
+  const currentPage =
+    Number.isSafeInteger(pageValue) && pageValue >= 1 && pageValue <= MAX_PAGE
+      ? pageValue
+      : 1;
+
+  const { matches, totalCount, hasQuery, isPending, error, retry } =
+    useProductSearch(searchValue, true, {
+      first: PAGE_SIZE,
+      page: currentPage,
+    });
+
+  const showResults = hasQuery && !isPending && !error;
 
   function handleSearchChange(event) {
     const value = event.target.value;
@@ -23,11 +41,19 @@ export default function SearchResults() {
       url.searchParams.delete("q");
     }
 
+    url.searchParams.delete("page");
+    url.searchParams.delete("after");
+
     window.history.replaceState(
       null,
       "",
       `${url.pathname}${url.search}${url.hash}`,
     );
+  }
+
+  function handleRetry() {
+    searchInputRef.current?.focus();
+    retry();
   }
 
   return (
@@ -47,6 +73,7 @@ export default function SearchResults() {
         </label>
 
         <input
+          ref={searchInputRef}
           id="results-search"
           type="search"
           autoComplete="off"
@@ -68,18 +95,35 @@ export default function SearchResults() {
         hasQuery={hasQuery}
         isPending={isPending}
         error={error}
-        count={matches.length}
-        onRetry={retry}
+        count={totalCount}
+        onRetry={handleRetry}
       />
 
-      {hasQuery && !isPending && !error && matches.length > 0 && (
-        <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {matches.map((product) => (
-            <li key={product.id} className="min-w-0">
-              <ProductCard product={product} />
-            </li>
-          ))}
-        </ul>
+      {showResults && (
+        <>
+          {matches.length > 0 ? (
+            <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {matches.map((product) => (
+                <li key={product.id} className="min-w-0">
+                  <ShopifyProductCard product={product} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            currentPage > 1 && (
+              <p className="mt-6">
+                Ingen produkter på denne siden. Gå tilbake til første side.
+              </p>
+            )
+          )}
+
+          <SearchPagination
+            query={query}
+            currentPage={currentPage}
+            totalCount={totalCount}
+            pageSize={PAGE_SIZE}
+          />
+        </>
       )}
     </section>
   );

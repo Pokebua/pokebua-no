@@ -22,13 +22,16 @@ export default function NavbarSearch({
   searchValue,
   setSearchValue,
 }) {
-  const { matches, hasQuery, isPending, error, retry } = useProductSearch(
-    searchValue,
-    searchOpen,
-  );
-
-  const totalMatches = matches.length;
-  const suggestions = matches.slice(0, SUGGESTION_LIMIT);
+  const {
+    matches: suggestions,
+    totalCount: totalMatches,
+    hasQuery,
+    isPending,
+    error,
+    retry,
+  } = useProductSearch(searchValue, searchOpen, {
+    first: SUGGESTION_LIMIT,
+  });
 
   const searchButtonRef = useRef(null);
   const searchInputRef = useRef(null);
