@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
-const linkClassName =
-  "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-[#001016] px-3 py-2 font-semibold transition-colors hover:bg-[#001016] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]";
+const controlClassName =
+  "inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-[#001016] font-semibold transition-colors hover:bg-[#001016] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#001016]";
 
 function createPageHref(query, page) {
   const params = new URLSearchParams({ q: query });
@@ -11,6 +12,58 @@ function createPageHref(query, page) {
   }
 
   return `/sok?${params}`;
+}
+
+function getVisiblePages(currentPage, totalPages, compact) {
+  if (totalPages <= (compact ? 4 : 7)) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set([1, totalPages]);
+
+  if (compact) {
+    pages.add(Math.min(Math.max(currentPage, 2), totalPages - 1));
+  } else {
+    for (
+      let page = Math.max(1, currentPage - 2);
+      page <= Math.min(totalPages, currentPage + 2);
+      page += 1
+    ) {
+      pages.add(page);
+    }
+  }
+
+  return [...pages].sort((a, b) => a - b);
+}
+
+function PageNumbers({ pages, query, currentPage }) {
+  return pages.map((page, index) => (
+    <li key={page} className="flex shrink-0 items-center gap-1 sm:gap-2">
+      {index > 0 && page - pages[index - 1] > 1 && (
+        <span aria-hidden="true" className="text-gray-500">
+          …
+        </span>
+      )}
+
+      {page === currentPage ? (
+        <span
+          aria-current="page"
+          aria-label={`Side ${page}`}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-[#001016] bg-[#001016] font-semibold text-[#f7b900]"
+        >
+          {page}
+        </span>
+      ) : (
+        <Link
+          href={createPageHref(query, page)}
+          aria-label={`Gå til side ${page}`}
+          className={controlClassName}
+        >
+          {page}
+        </Link>
+      )}
+    </li>
+  ));
 }
 
 export default function SearchPagination({
@@ -23,109 +76,87 @@ export default function SearchPagination({
 
   if (totalPages <= 1 && currentPage === 1) return null;
 
-  const visiblePages = new Set([1]);
+  const isValidPage = currentPage >= 1 && currentPage <= totalPages;
 
-  if (totalPages > 0) {
-    visiblePages.add(totalPages);
+  if (!isValidPage) {
+    return (
+      <nav aria-label="Sider med søkeresultater" className="mt-8 text-center">
+        <p className="text-sm">Denne siden er ikke lenger tilgjengelig.</p>
+
+        <Link
+          href={createPageHref(query, 1)}
+          className="mt-3 inline-flex min-h-11 items-center rounded-md px-4 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#001016]"
+        >
+          Til første side
+        </Link>
+      </nav>
+    );
   }
 
-  // Show every number for smaller result sets.
-  if (totalPages <= 7) {
-    for (let page = 1; page <= totalPages; page += 1) {
-      visiblePages.add(page);
-    }
-  } else {
-    for (
-      let page = Math.max(1, currentPage - 2);
-      page <= Math.min(totalPages, currentPage + 2);
-      page += 1
-    ) {
-      visiblePages.add(page);
-    }
-  }
-
-  const pages = [...visiblePages].sort((a, b) => a - b);
-  const isValidPage = currentPage <= totalPages;
+  const mobilePages = getVisiblePages(currentPage, totalPages, true);
+  const desktopPages = getVisiblePages(currentPage, totalPages, false);
 
   return (
     <nav aria-label="Sider med søkeresultater" className="mt-8">
       <p className="text-center text-sm">
-        {isValidPage
-          ? `Side ${currentPage} av ${totalPages}`
-          : "Denne siden er ikke lenger tilgjengelig."}
+        Side {currentPage} av {totalPages}
       </p>
 
-      <ul className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        <li>
-          {currentPage > 1 && isValidPage ? (
-            <Link
-              href={createPageHref(query, currentPage - 1)}
-              rel="prev"
-              className={linkClassName}
-            >
-              Forrige
-            </Link>
-          ) : (
-            <span
-              aria-disabled="true"
-              className="inline-flex min-h-11 items-center px-3 text-gray-500"
-            >
-              Forrige
-            </span>
-          )}
-        </li>
+      <div className="mt-3 flex items-center justify-center gap-1 sm:gap-2">
+        {currentPage > 1 ? (
+          <Link
+            href={createPageHref(query, currentPage - 1)}
+            rel="prev"
+            aria-label="Forrige side"
+            className={controlClassName}
+          >
+            <IoChevronBack aria-hidden="true" className="size-5" />
+          </Link>
+        ) : (
+          <span
+            aria-disabled="true"
+            aria-label="Forrige side"
+            className="inline-flex size-11 shrink-0 items-center justify-center text-gray-400"
+          >
+            <IoChevronBack aria-hidden="true" className="size-5" />
+          </span>
+        )}
 
-        {pages.map((page, index) => {
-          const showGap = index > 0 && page - pages[index - 1] > 1;
+        <ul className="flex items-center gap-1 sm:hidden">
+          <PageNumbers
+            pages={mobilePages}
+            query={query}
+            currentPage={currentPage}
+          />
+        </ul>
 
-          return (
-            <li key={page} className="flex items-center gap-2">
-              {showGap && (
-                <span aria-hidden="true" className="px-1">
-                  …
-                </span>
-              )}
+        <ul className="hidden items-center gap-2 sm:flex">
+          <PageNumbers
+            pages={desktopPages}
+            query={query}
+            currentPage={currentPage}
+          />
+        </ul>
 
-              {page === currentPage ? (
-                <span
-                  aria-current="page"
-                  aria-label={`Side ${page}`}
-                  className="grid min-h-11 min-w-11 place-items-center rounded-md border border-[#001016] bg-[#001016] px-3 py-2 font-semibold text-[#f7b900]"
-                >
-                  {page}
-                </span>
-              ) : (
-                <Link
-                  href={createPageHref(query, page)}
-                  aria-label={`Gå til side ${page}`}
-                  className={linkClassName}
-                >
-                  {page}
-                </Link>
-              )}
-            </li>
-          );
-        })}
-
-        <li>
-          {currentPage < totalPages ? (
-            <Link
-              href={createPageHref(query, currentPage + 1)}
-              rel="next"
-              className={linkClassName}
-            >
-              Neste
-            </Link>
-          ) : (
-            <span
-              aria-disabled="true"
-              className="inline-flex min-h-11 items-center px-3 text-gray-500"
-            >
-              Neste
-            </span>
-          )}
-        </li>
-      </ul>
+        {currentPage < totalPages ? (
+          <Link
+            href={createPageHref(query, currentPage + 1)}
+            rel="next"
+            aria-label="Neste side"
+            className={controlClassName}
+          >
+            <IoChevronForward aria-hidden="true" className="size-5" />
+          </Link>
+        ) : (
+          <span
+            aria-disabled="true"
+            aria-label="Neste side"
+            className="inline-flex size-11 shrink-0 items-center justify-center text-gray-400"
+          >
+            <IoChevronForward aria-hidden="true" className="size-5" />
+          </span>
+        )}
+      </div>
     </nav>
   );
 }
