@@ -1,17 +1,41 @@
-import { getProducts } from "@/data/products";
-
 /**
- * Searches all test products by name.
- * Returns full product objects for reuse by other search interfaces.
+ * Searches Shopify through our server endpoint.
+ * Private Shopify credentials remain on the server.
  */
-export async function searchProducts(query) {
-  const normalizedQuery = query.trim().toLowerCase();
+export async function searchProducts(
+  query,
+  { first = 24, after = null, signal } = {},
+) {
+  const normalizedQuery = query.trim();
 
-  if (!normalizedQuery) return [];
+  if (!normalizedQuery) {
+    return {
+      nodes: [],
+      totalCount: 0,
+      pageInfo: {
+        hasNextPage: false,
+        endCursor: null,
+      },
+    };
+  }
 
-  const products = await getProducts();
+  const params = new URLSearchParams({
+    q: normalizedQuery,
+    first: String(first),
+  });
 
-  return products.filter((product) =>
-    product.name.toLowerCase().includes(normalizedQuery),
-  );
+  if (after) {
+    params.set("after", after);
+  }
+
+  const response = await fetch(`/api/search?${params}`, {
+    signal,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Kunne ikke hente søkeresultater. Prøv igjen.");
+  }
+
+  return response.json();
 }

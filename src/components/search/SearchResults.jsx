@@ -1,17 +1,42 @@
 "use client";
 
+import { useRef } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import ProductCard from "@/components/ProductCard";
+import ShopifyProductCard from "@/components/products/ShopifyProductCard";
 import useProductSearch from "@/hooks/useProductSearch";
 import SearchFeedback from "@/components/search/SearchFeedback";
 
+const paginationClassName =
+  "inline-flex min-h-11 items-center justify-center rounded-md border border-[#001016] px-4 py-2 font-semibold hover:bg-[#001016] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]";
+
+function createSearchHref(query, after = null) {
+  const params = new URLSearchParams({ q: query });
+
+  if (after) {
+    params.set("after", after);
+  }
+
+  return `/sok?${params}`;
+}
+
 export default function SearchResults() {
   const searchParams = useSearchParams();
+  const searchInputRef = useRef(null);
+
   const searchValue = searchParams.get("q") ?? "";
   const query = searchValue.trim();
+  const after = searchParams.get("after") || null;
 
-  const { matches, hasQuery, isPending, error, retry } =
-    useProductSearch(searchValue);
+  const { matches, totalCount, pageInfo, hasQuery, isPending, error, retry } =
+    useProductSearch(searchValue, true, {
+      first: 24,
+      after,
+    });
+
+  const hasNextPage = pageInfo.hasNextPage && Boolean(pageInfo.endCursor);
+
+  const showResults = hasQuery && !isPending && !error;
 
   function handleSearchChange(event) {
     const value = event.target.value;
@@ -23,11 +48,18 @@ export default function SearchResults() {
       url.searchParams.delete("q");
     }
 
+    url.searchParams.delete("after");
+
     window.history.replaceState(
       null,
       "",
       `${url.pathname}${url.search}${url.hash}`,
     );
+  }
+
+  function handleRetry() {
+    searchInputRef.current?.focus();
+    retry();
   }
 
   return (
@@ -47,6 +79,7 @@ export default function SearchResults() {
         </label>
 
         <input
+          ref={searchInputRef}
           id="results-search"
           type="search"
           autoComplete="off"
@@ -68,18 +101,54 @@ export default function SearchResults() {
         hasQuery={hasQuery}
         isPending={isPending}
         error={error}
-        count={matches.length}
-        onRetry={retry}
+        count={totalCount}
+        onRetry={handleRetry}
       />
 
-      {hasQuery && !isPending && !error && matches.length > 0 && (
-        <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {matches.map((product) => (
-            <li key={product.id} className="min-w-0">
-              <ProductCard product={product} />
-            </li>
-          ))}
-        </ul>
+      {showResults && (
+        <>
+          {matches.length > 0 ? (
+            <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {matches.map((product) => (
+                <li key={product.id} className="min-w-0">
+                  <ShopifyProductCard product={product} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            after && (
+              <p className="mt-6">
+                Ingen produkter på denne siden. Gå tilbake til første side.
+              </p>
+            )
+          )}
+
+          {(after || hasNextPage) && (
+            <nav
+              aria-label="Sider med søkeresultater"
+              className="mt-8 flex flex-wrap justify-center gap-4"
+            >
+              {after && (
+                <Link
+                  href={createSearchHref(query)}
+                  className={paginationClassName}
+                >
+                  Første side
+                </Link>
+              )}
+
+              {hasNextPage && (
+                <Link
+                  href={createSearchHref(query, pageInfo.endCursor)}
+                  rel="next"
+                  className={paginationClassName}
+                >
+                  Neste side
+                </Link>
+              )}
+            </nav>
+          )}
+        </>
       )}
     </section>
   );
