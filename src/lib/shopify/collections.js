@@ -85,3 +85,30 @@ export async function getCollectionByHandle(
 
   return data.collection;
 }
+
+export async function getAllCollections() {
+  const collectionsById = new Map();
+  const seenCursors = new Set();
+  let after = null;
+
+  while (true) {
+    const page = await getCollections({ first: 100, after });
+
+    for (const collection of page.nodes) {
+      collectionsById.set(collection.id, collection);
+    }
+
+    if (!page.pageInfo.hasNextPage) {
+      return [...collectionsById.values()];
+    }
+
+    const nextCursor = page.pageInfo.endCursor;
+
+    if (!nextCursor || seenCursors.has(nextCursor)) {
+      throw new Error("Shopify collection pagination did not advance.");
+    }
+
+    seenCursors.add(nextCursor);
+    after = nextCursor;
+  }
+}

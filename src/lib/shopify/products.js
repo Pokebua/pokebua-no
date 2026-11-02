@@ -29,6 +29,27 @@ const variantFields = `
   }
 `;
 
+export async function getNewestProducts({ first = 8 } = {}) {
+  validatePageSize(first);
+
+  const data = await shopifyFetch({
+    query: `
+      ${productCardFragment}
+
+      query NewestProducts($first: Int!) {
+        products(first: $first, sortKey: CREATED_AT, reverse: true) {
+          nodes {
+            ...ProductCardFields
+          }
+        }
+      }
+    `,
+    variables: { first },
+  });
+
+  return data.products.nodes;
+}
+
 export async function getProducts({ first = 24, after = null } = {}) {
   validatePageSize(first);
 
@@ -160,4 +181,48 @@ export async function getProductImages(
   });
 
   return data.product?.images ?? null;
+}
+
+export async function getProductWithAllVariants(handle) {
+  const product = await getProductByHandle(handle);
+
+  if (!product) return null;
+
+  const variantsById = new Map(
+    product.variants.nodes.map((variant) => [variant.id, variant]),
+  );
+
+  const seenCursors = new Set();
+  let pageInfo = product.variants.pageInfo;
+
+  while (pageInfo.hasNextPage) {
+    const cursor = pageInfo.endCursor;
+
+    if (!cursor || seenCursors.has(cursor)) {
+      throw new Error("Shopify variant pagination did not advance.");
+    }
+
+    seenCursors.add(cursor);
+
+    const page = await getProductVariants(product.id, {
+      first: 100,
+      after: cursor,
+    });
+
+    if (!page) return null;
+
+    for (const variant of page.nodes) {
+      variantsById.set(variant.id, variant);
+    }
+
+    pageInfo = page.pageInfo;
+  }
+
+  return {
+    ...product,
+    variants: {
+      nodes: [...variantsById.values()],
+      pageInfo,
+    },
+  };
 }
