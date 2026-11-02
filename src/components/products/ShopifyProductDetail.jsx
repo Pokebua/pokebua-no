@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 import { formatMoney } from "@/utils/formatMoney";
 
 export default function ShopifyProductDetail({ product }) {
@@ -126,18 +127,17 @@ export default function ShopifyProductDetail({ product }) {
         </div>
 
         <div className="mt-8">
-          <button
-            type="button"
-            disabled
-            aria-describedby="product-purchase-help"
-            className="min-h-11 w-full cursor-not-allowed rounded-lg border-3 border-yellow-400 bg-black px-6 py-3 font-semibold text-white opacity-60"
-          >
-            {selectedVariant && !available ? "Utsolgt" : "Legg i handlekurv"}
-          </button>
-
-          <p id="product-purchase-help" className="mt-2 text-sm">
-            Kjøp er ikke tilgjengelig på denne nettsiden ennå.
-          </p>
+          <AddToCartButton
+            key={selectedVariantId}
+            variantId={selectedVariantId}
+            productName={
+              selectedVariant && selectedVariant.title !== "Default Title"
+                ? `${product.title} – ${selectedVariant.title}`
+                : product.title
+            }
+            available={available}
+            requiresSellingPlan={product.requiresSellingPlan}
+          />
         </div>
       </div>
     </section>
