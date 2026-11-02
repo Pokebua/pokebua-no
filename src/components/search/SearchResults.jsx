@@ -1,24 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import ShopifyProductCard from "@/components/products/ShopifyProductCard";
 import useProductSearch from "@/hooks/useProductSearch";
 import SearchFeedback from "@/components/search/SearchFeedback";
+import SearchPagination from "@/components/search/SearchPagination";
 
-const paginationClassName =
-  "inline-flex min-h-11 items-center justify-center rounded-md border border-[#001016] px-4 py-2 font-semibold hover:bg-[#001016] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]";
-
-function createSearchHref(query, after = null) {
-  const params = new URLSearchParams({ q: query });
-
-  if (after) {
-    params.set("after", after);
-  }
-
-  return `/sok?${params}`;
-}
+const PAGE_SIZE = 24;
+const MAX_PAGE = Math.ceil(1000 / PAGE_SIZE);
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
@@ -26,15 +16,18 @@ export default function SearchResults() {
 
   const searchValue = searchParams.get("q") ?? "";
   const query = searchValue.trim();
-  const after = searchParams.get("after") || null;
+  const pageValue = Number(searchParams.get("page") ?? "1");
 
-  const { matches, totalCount, pageInfo, hasQuery, isPending, error, retry } =
+  const currentPage =
+    Number.isSafeInteger(pageValue) && pageValue >= 1 && pageValue <= MAX_PAGE
+      ? pageValue
+      : 1;
+
+  const { matches, totalCount, hasQuery, isPending, error, retry } =
     useProductSearch(searchValue, true, {
-      first: 24,
-      after,
+      first: PAGE_SIZE,
+      page: currentPage,
     });
-
-  const hasNextPage = pageInfo.hasNextPage && Boolean(pageInfo.endCursor);
 
   const showResults = hasQuery && !isPending && !error;
 
@@ -48,6 +41,7 @@ export default function SearchResults() {
       url.searchParams.delete("q");
     }
 
+    url.searchParams.delete("page");
     url.searchParams.delete("after");
 
     window.history.replaceState(
@@ -116,38 +110,19 @@ export default function SearchResults() {
               ))}
             </ul>
           ) : (
-            after && (
+            currentPage > 1 && (
               <p className="mt-6">
                 Ingen produkter på denne siden. Gå tilbake til første side.
               </p>
             )
           )}
 
-          {(after || hasNextPage) && (
-            <nav
-              aria-label="Sider med søkeresultater"
-              className="mt-8 flex flex-wrap justify-center gap-4"
-            >
-              {after && (
-                <Link
-                  href={createSearchHref(query)}
-                  className={paginationClassName}
-                >
-                  Første side
-                </Link>
-              )}
-
-              {hasNextPage && (
-                <Link
-                  href={createSearchHref(query, pageInfo.endCursor)}
-                  rel="next"
-                  className={paginationClassName}
-                >
-                  Neste side
-                </Link>
-              )}
-            </nav>
-          )}
+          <SearchPagination
+            query={query}
+            currentPage={currentPage}
+            totalCount={totalCount}
+            pageSize={PAGE_SIZE}
+          />
         </>
       )}
     </section>

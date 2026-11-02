@@ -1,4 +1,4 @@
-import { searchShopifyProducts } from "@/lib/shopify/search";
+import { getShopifySearchPage } from "@/lib/shopify/search";
 
 const ALLOWED_PAGE_SIZES = new Set([5, 24]);
 
@@ -15,12 +15,19 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
 
   const query = (searchParams.get("q") ?? "").trim();
-  const firstValue = searchParams.get("first") ?? "24";
-  const first = Number(firstValue);
-  const after = searchParams.get("after") || null;
+  const first = Number(searchParams.get("first") ?? "24");
+  const page = Number(searchParams.get("page") ?? "1");
 
   if (!ALLOWED_PAGE_SIZES.has(first)) {
     return jsonResponse({ error: "Ugyldig antall søkeresultater." }, 400);
+  }
+
+  if (
+    !Number.isSafeInteger(page) ||
+    page < 1 ||
+    page > Math.ceil(1000 / first)
+  ) {
+    return jsonResponse({ error: "Ugyldig sidetall." }, 400);
   }
 
   if (query.length > 200) {
@@ -31,9 +38,9 @@ export async function GET(request) {
   }
 
   try {
-    const results = await searchShopifyProducts(query, {
+    const results = await getShopifySearchPage(query, {
       first,
-      after,
+      page,
     });
 
     return jsonResponse(results);

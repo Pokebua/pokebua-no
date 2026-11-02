@@ -11,7 +11,7 @@ const EMPTY_PAGE_INFO = {
 export default function useProductSearch(
   value,
   enabled = true,
-  { first = 24, after = null } = {},
+  { first = 24, page = 1 } = {},
 ) {
   const query = value.trim();
   const hasQuery = query.length > 0;
@@ -21,24 +21,23 @@ export default function useProductSearch(
     query,
     enabled,
     first,
-    after,
+    page,
     attempt,
   });
   const [result, setResult] = useState(null);
 
-  // Returning to an earlier query still starts a fresh request.
   if (
     request.query !== query ||
     request.enabled !== enabled ||
     request.first !== first ||
-    request.after !== after ||
+    request.page !== page ||
     request.attempt !== attempt
   ) {
     setRequest({
       query,
       enabled,
       first,
-      after,
+      page,
       attempt,
     });
   }
@@ -53,7 +52,7 @@ export default function useProductSearch(
       try {
         const data = await searchProducts(request.query, {
           first: request.first,
-          after: request.after,
+          page: request.page,
           signal: controller.signal,
         });
 
@@ -88,6 +87,7 @@ export default function useProductSearch(
 
   const isCurrent = result?.request === request;
   const isPending = enabled && hasQuery && !isCurrent;
+
   const currentResult = enabled && hasQuery && isCurrent ? result : null;
 
   function retry() {

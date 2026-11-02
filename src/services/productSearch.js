@@ -1,10 +1,6 @@
-/**
- * Searches Shopify through our server endpoint.
- * Private Shopify credentials remain on the server.
- */
 export async function searchProducts(
   query,
-  { first = 24, after = null, signal } = {},
+  { first = 24, page = 1, signal } = {},
 ) {
   const normalizedQuery = query.trim();
 
@@ -22,11 +18,8 @@ export async function searchProducts(
   const params = new URLSearchParams({
     q: normalizedQuery,
     first: String(first),
+    page: String(page),
   });
-
-  if (after) {
-    params.set("after", after);
-  }
 
   const response = await fetch(`/api/search?${params}`, {
     signal,
