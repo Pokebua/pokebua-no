@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import useCart from "@/hooks/useCart";
 
+const MAX_QUANTITY = 2147483647;
+
 const buttonClassName =
   "grid size-11 shrink-0 place-items-center rounded-md border border-white/30 text-xl text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900]";
 
@@ -10,21 +12,25 @@ export default function CartQuantityControls({
   lineId,
   productName,
   quantity,
+  availableForSale,
 }) {
-  const { changeQuantity } = useCart();
+  const { changeQuantity, isLoading, isBusy, cartError } = useCart();
 
   const pendingRef = useRef(false);
   const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const decreaseUnavailable = isPending || quantity <= 1;
-  const increaseUnavailable = isPending || quantity >= Number.MAX_SAFE_INTEGER;
+  const unavailable = isPending || isLoading || isBusy || Boolean(cartError);
+
+  const decreaseUnavailable = unavailable || quantity <= 1;
+  const increaseUnavailable =
+    unavailable || !availableForSale || quantity >= MAX_QUANTITY;
 
   async function handleChange(change) {
-    if (pendingRef.current) return;
-    if (change === -1 && quantity <= 1) return;
-    if (change === 1 && quantity >= Number.MAX_SAFE_INTEGER) return;
+    if (pendingRef.current || unavailable) return;
+    if (change === -1 && decreaseUnavailable) return;
+    if (change === 1 && increaseUnavailable) return;
 
     pendingRef.current = true;
     setIsPending(true);
@@ -32,15 +38,14 @@ export default function CartQuantityControls({
     setError("");
 
     try {
-      const updatedLines = await changeQuantity(lineId, change);
-      const updatedLine = updatedLines.find((line) => line.id === lineId);
+      const result = await changeQuantity(lineId, change);
+      const updatedLine = result.cart.lines.find((line) => line.id === lineId);
 
-      if (updatedLine) {
+      if (updatedLine && !result.warnings?.length) {
         setMessage(`Antall for ${productName} er nå ${updatedLine.quantity}.`);
       }
     } catch (error) {
-      console.error("Updating cart quantity failed:", error);
-      setError("Kunne ikke endre antallet. Prøv igjen.");
+      setError(error.message || "Kunne ikke endre antallet.");
     } finally {
       pendingRef.current = false;
       setIsPending(false);

@@ -8,6 +8,7 @@ export default function useCartRemoval({
   removeItem,
   panelRef,
   closeButtonRef,
+  unavailable,
 }) {
   const { showToast } = useToast();
 
@@ -56,12 +57,17 @@ export default function useCartRemoval({
   }, [lines, panelRef, closeButtonRef]);
 
   async function handleRemove(lineId, button) {
-    if (removalPendingRef.current) return;
+    if (removalPendingRef.current || unavailable) return;
 
     const index = lines.findIndex((line) => line.id === lineId);
     if (index === -1) return;
 
-    const productName = lines[index].product.name;
+    const variant = lines[index].merchandise;
+
+    const productName =
+      variant.title === "Default Title"
+        ? variant.product.title
+        : `${variant.product.title} – ${variant.title}`;
 
     removalPendingRef.current = true;
     removalFocusRef.current = { lineId, index, button };
@@ -75,7 +81,7 @@ export default function useCartRemoval({
     } catch (error) {
       console.error("Removing cart item failed:", error);
       removalFocusRef.current = null;
-      setRemovalError("Kunne ikke fjerne varen. Prøv igjen.");
+      setRemovalError(error.message || "Kunne ikke fjerne varen.");
       return;
     } finally {
       removalPendingRef.current = false;

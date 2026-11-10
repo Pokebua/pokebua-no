@@ -12,7 +12,17 @@ const focusClassName =
 const iconClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors hover:bg-[#f7b900]/10 hover:text-white ${focusClassName}`;
 
 export default function Cart({ isOpen, setIsOpen }) {
-  const { lines, itemCount, subtotalInOre, removeItem } = useCart();
+  const {
+    lines,
+    itemCount,
+    subtotal,
+    isLoading,
+    isBusy,
+    cartError,
+    warnings,
+    removeItem,
+    reloadCart,
+  } = useCart();
 
   const {
     triggerRef,
@@ -26,12 +36,15 @@ export default function Cart({ isOpen, setIsOpen }) {
     handleCartBlur,
   } = useCartPanel({ isOpen, setIsOpen });
 
+  const unavailable = isLoading || isBusy || Boolean(cartError);
+
   const { removingLineId, removalMessage, removalError, handleRemove } =
     useCartRemoval({
       lines,
       removeItem,
       panelRef,
       closeButtonRef,
+      unavailable,
     });
 
   return (
@@ -54,10 +67,16 @@ export default function Cart({ isOpen, setIsOpen }) {
           panelRef={panelRef}
           closeButtonRef={closeButtonRef}
           lines={lines}
-          subtotalInOre={subtotalInOre}
+          subtotal={subtotal}
+          isLoading={isLoading}
+          isBusy={isBusy}
+          cartError={cartError}
+          warnings={warnings}
+          unavailable={unavailable}
           removingLineId={removingLineId}
           removalMessage={removalMessage}
           removalError={removalError}
+          onReload={reloadCart}
           onSelect={dismissCart}
           onRemove={handleRemove}
           onClose={closeCart}
