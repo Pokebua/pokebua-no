@@ -19,8 +19,11 @@ export default function Footer() {
           <div className="flex flex-col items-start gap-5">
             <PokebuaLogo />
 
-            <p className="max-w-xs text-lg font-semibold leading-relaxed text-[#f7b900]">
-              Hos Pokébua sprer vi glede og topphits!
+            <p className="max-w-xs text-base font-semibold leading-relaxed text-[#f7b900]">
+              Hos pokebua skal du føle at du som person og dine produkter blir
+              ivaretatt på en trygg og god måte. Vi fokuserer på å skape et
+              trivelig miljø for alle enten du handler eller henger i chatten på
+              stream!
             </p>
           </div>
 
@@ -115,8 +118,38 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <p className="mt-5 text-xs leading-relaxed text-white/60">
-            © {currentYear} Pokébua. Alle rettigheter reservert.
+          <p className="mt-2 text-xs leading-relaxed text-white/60">
+            Utviklet av{" "}
+            <a
+              href="https://github.com/OleKoderNo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClassName}
+            >
+              OleKoderNo
+              <span className="sr-only"> (åpnes i en ny fane)</span>
+            </a>{" "}
+            (Tech Lead &amp; Developer) ·{" "}
+            <a
+              href="https://github.com/miastubb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClassName}
+            >
+              miastubb
+              <span className="sr-only"> (åpnes i en ny fane)</span>
+            </a>{" "}
+            (Developer) ·{" "}
+            <a
+              href="https://github.com/ND-Nitro"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClassName}
+            >
+              ND-Nitro
+              <span className="sr-only"> (åpnes i en ny fane)</span>
+            </a>{" "}
+            (Developer)
           </p>
         </div>
       </div>
