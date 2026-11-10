@@ -6,6 +6,7 @@ import {
   deleteCartLine,
   ensureCart,
   fetchCart,
+  fetchCartCheckout,
   updateCartQuantity,
 } from "@/services/shopifyCart";
 
@@ -20,11 +21,13 @@ export default function CartProvider({ children }) {
   const [pendingCount, setPendingCount] = useState(0);
   const [cartError, setCartError] = useState("");
   const [warnings, setWarnings] = useState([]);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const cartRef = useRef(null);
   const restorationRef = useRef(null);
   const queueRef = useRef(Promise.resolve());
   const needsRefreshRef = useRef(false);
+  const checkoutRef = useRef(false);
 
   const applyCart = useCallback((nextCart) => {
     cartRef.current = nextCart;
@@ -49,7 +52,7 @@ export default function CartProvider({ children }) {
       })
       .catch((error) => {
         needsRefreshRef.current = true;
-        setCartError(error.message);
+        setCartError(error.message || RECOVERY_MESSAGE);
         throw error;
       })
       .finally(() => {
@@ -65,6 +68,25 @@ export default function CartProvider({ children }) {
   useEffect(() => {
     // Restore failures are displayed through cartError.
     void restoreCart().catch(() => {});
+  }, [restoreCart]);
+
+  useEffect(() => {
+    function handlePageShow(event) {
+      if (!event.persisted) return;
+
+      // Unlock and refresh when returning from checkout through
+      // the browser's back/forward cache.
+      checkoutRef.current = false;
+      setIsCheckingOut(false);
+
+      void restoreCart().catch(() => {});
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
   }, [restoreCart]);
 
   function handleOperationError(error) {
@@ -92,6 +114,10 @@ export default function CartProvider({ children }) {
     setPendingCount((count) => count + 1);
 
     const pending = queueRef.current.then(async () => {
+      if (checkoutRef.current) {
+        throw new Error("Kassen åpnes. Vent litt.");
+      }
+
       if (restorationRef.current) {
         await restorationRef.current;
       }
@@ -114,6 +140,7 @@ export default function CartProvider({ children }) {
       setPendingCount((count) => count - 1);
     });
 
+    // Failed operations must not block later cart changes.
     queueRef.current = completed.catch(() => {});
 
     return completed;
@@ -180,10 +207,38 @@ export default function CartProvider({ children }) {
     });
   }
 
+  function checkout() {
+    return enqueueOperation(async () => {
+      checkoutRef.current = true;
+      setIsCheckingOut(true);
+
+      try {
+        const result = await fetchCartCheckout();
+
+        if (typeof result.checkoutUrl !== "string" || !result.checkoutUrl) {
+          throw new Error("Kunne ikke åpne kassen. Prøv igjen.");
+        }
+
+        acceptResponse(result);
+
+        // Keep the controls locked while navigating to Shopify.
+        window.location.assign(result.checkoutUrl);
+      } catch (error) {
+        checkoutRef.current = false;
+        setIsCheckingOut(false);
+        throw error;
+      }
+    });
+  }
+
   function reloadCart() {
     setPendingCount((count) => count + 1);
 
-    const operation = queueRef.current.then(() => restoreCart());
+    const operation = queueRef.current.then(() => {
+      if (checkoutRef.current) return;
+
+      return restoreCart();
+    });
 
     const completed = operation.finally(() => {
       setPendingCount((count) => count - 1);
@@ -202,13 +257,15 @@ export default function CartProvider({ children }) {
         itemCount: cart?.totalQuantity ?? 0,
         subtotal: cart?.cost.subtotalAmount ?? null,
         isLoading,
-        isBusy: pendingCount > 0,
+        isBusy: pendingCount > 0 || isCheckingOut,
+        isCheckingOut,
         cartError,
         warnings,
         addItem,
         changeQuantity,
         removeItem,
         reloadCart,
+        checkout,
       }}
     >
       {children}

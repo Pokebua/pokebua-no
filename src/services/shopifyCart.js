@@ -86,3 +86,9 @@ export function deleteCartLine(lineId) {
     },
   });
 }
+
+export function fetchCartCheckout() {
+  return cartRequest("/api/cart/checkout", {
+    method: "POST",
+  });
+}
