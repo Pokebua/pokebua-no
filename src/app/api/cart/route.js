@@ -1,4 +1,5 @@
 import { createShopifyCart, getShopifyCart } from "@/lib/shopify/cart";
+import { getBuyerIp } from "@/lib/shopify/buyerIp";
 import {
   clearCartId,
   readCartId,
@@ -17,15 +18,16 @@ function jsonResponse(body, status = 200) {
   });
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const buyerIp = getBuyerIp(request);
     const cartId = await readCartId();
 
     if (!cartId) {
       return jsonResponse({ cart: null });
     }
 
-    const cart = await getShopifyCart(cartId);
+    const cart = await getShopifyCart(cartId, { buyerIp });
 
     // Clear the cookie only when Shopify confirms the cart is gone.
     if (!cart) {
@@ -59,10 +61,11 @@ export async function POST(request) {
   }
 
   try {
+    const buyerIp = getBuyerIp(request);
     const cartId = await readCartId();
 
     if (cartId) {
-      const existingCart = await getShopifyCart(cartId);
+      const existingCart = await getShopifyCart(cartId, { buyerIp });
 
       if (existingCart) {
         return jsonResponse({
@@ -74,7 +77,7 @@ export async function POST(request) {
       await clearCartId();
     }
 
-    const result = await createShopifyCart();
+    const result = await createShopifyCart({ buyerIp });
 
     // Preserve a returned cart even if Shopify also reports an error.
     if (result.cart) {

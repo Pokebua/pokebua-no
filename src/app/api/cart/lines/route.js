@@ -5,6 +5,7 @@ import {
   removeShopifyCartItem,
   updateShopifyCartItem,
 } from "@/lib/shopify/cart";
+import { getBuyerIp } from "@/lib/shopify/buyerIp";
 import {
   clearCartId,
   readCartId,
@@ -94,6 +95,7 @@ async function handleMutation(request, action) {
   let mutationStarted = false;
 
   try {
+    const buyerIp = getBuyerIp(request);
     const cartId = await readCartId();
 
     if (!cartId) {
@@ -107,7 +109,7 @@ async function handleMutation(request, action) {
       );
     }
 
-    const currentCart = await getShopifyCart(cartId);
+    const currentCart = await getShopifyCart(cartId, { buyerIp });
 
     if (!currentCart) {
       await clearCartId();
@@ -146,11 +148,16 @@ async function handleMutation(request, action) {
     if (action === "add") {
       result = await addShopifyCartItem(cartId, body.variantId, {
         quantity: body.quantity,
+        buyerIp,
       });
     } else if (action === "update") {
-      result = await updateShopifyCartItem(cartId, body.lineId, body.quantity);
+      result = await updateShopifyCartItem(cartId, body.lineId, body.quantity, {
+        buyerIp,
+      });
     } else {
-      result = await removeShopifyCartItem(cartId, body.lineId);
+      result = await removeShopifyCartItem(cartId, body.lineId, {
+        buyerIp,
+      });
     }
 
     // Save the returned ID before any additional reads.
@@ -158,7 +165,9 @@ async function handleMutation(request, action) {
       await saveCartId(result.cart.id);
     }
 
-    const cart = result.cart ? await loadRemainingCartLines(result.cart) : null;
+    const cart = result.cart
+      ? await loadRemainingCartLines(result.cart, { buyerIp })
+      : null;
 
     if (result.userErrors.length > 0) {
       return jsonResponse(
