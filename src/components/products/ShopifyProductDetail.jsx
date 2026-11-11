@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import ProductImageGallery from "@/components/products/ProductImageGallery";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import BuyNowButton from "@/components/cart/BuyNowButton";
 import { formatMoney } from "@/utils/formatMoney";
@@ -35,8 +35,6 @@ export default function ShopifyProductDetail({ product }) {
   const selectedVariant =
     variants.find((variant) => variant.id === selectedVariantId) ?? null;
 
-  const image = selectedVariant?.image ?? product.featuredImage;
-
   const available = Boolean(selectedVariant?.availableForSale);
   const price = selectedVariant?.price ?? null;
   const compareAtPrice = selectedVariant?.compareAtPrice ?? null;
@@ -61,21 +59,13 @@ export default function ShopifyProductDetail({ product }) {
       aria-labelledby="product-heading"
       className="mx-auto grid max-w-6xl grid-cols-1 gap-8 p-6 font-sans md:grid-cols-2"
     >
-      <div className="relative aspect-square self-start overflow-hidden rounded-2xl border-2 border-yellow-400 bg-white">
-        {image ? (
-          <Image
-            src={image.url}
-            alt={image.altText || product.title}
-            fill
-            sizes="(min-width: 1152px) 536px, (min-width: 768px) 50vw, 100vw"
-            className="object-cover object-center"
-          />
-        ) : (
-          <div className="grid h-full place-items-center p-6 text-center text-gray-600">
-            Bilde kommer snart
-          </div>
-        )}
-      </div>
+      <ProductImageGallery
+        key={`${product.id}-${selectedVariantId}`}
+        images={product.images.nodes}
+        preferredImage={selectedVariant?.image}
+        featuredImage={product.featuredImage}
+        productName={product.title}
+      />
 
       <div className="flex min-w-0 flex-col justify-between rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-6 text-black">
         <div>

@@ -199,17 +199,17 @@ export async function getProductWithAllVariants(handle) {
     product.variants.nodes.map((variant) => [variant.id, variant]),
   );
 
-  const seenCursors = new Set();
-  let pageInfo = product.variants.pageInfo;
+  const seenVariantCursors = new Set();
+  let variantPageInfo = product.variants.pageInfo;
 
-  while (pageInfo.hasNextPage) {
-    const cursor = pageInfo.endCursor;
+  while (variantPageInfo.hasNextPage) {
+    const cursor = variantPageInfo.endCursor;
 
-    if (!cursor || seenCursors.has(cursor)) {
+    if (!cursor || seenVariantCursors.has(cursor)) {
       throw new Error("Shopify variant pagination did not advance.");
     }
 
-    seenCursors.add(cursor);
+    seenVariantCursors.add(cursor);
 
     const page = await getProductVariants(product.id, {
       first: 100,
@@ -222,14 +222,48 @@ export async function getProductWithAllVariants(handle) {
       variantsById.set(variant.id, variant);
     }
 
-    pageInfo = page.pageInfo;
+    variantPageInfo = page.pageInfo;
+  }
+
+  const imagesByUrl = new Map(
+    product.images.nodes.map((image) => [image.url, image]),
+  );
+
+  const seenImageCursors = new Set();
+  let imagePageInfo = product.images.pageInfo;
+
+  while (imagePageInfo.hasNextPage) {
+    const cursor = imagePageInfo.endCursor;
+
+    if (!cursor || seenImageCursors.has(cursor)) {
+      throw new Error("Shopify image pagination did not advance.");
+    }
+
+    seenImageCursors.add(cursor);
+
+    const page = await getProductImages(product.id, {
+      first: 100,
+      after: cursor,
+    });
+
+    if (!page) return null;
+
+    for (const image of page.nodes) {
+      imagesByUrl.set(image.url, image);
+    }
+
+    imagePageInfo = page.pageInfo;
   }
 
   return {
     ...product,
     variants: {
       nodes: [...variantsById.values()],
-      pageInfo,
+      pageInfo: variantPageInfo,
+    },
+    images: {
+      nodes: [...imagesByUrl.values()],
+      pageInfo: imagePageInfo,
     },
   };
 }
