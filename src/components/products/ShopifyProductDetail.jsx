@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import BuyNowButton from "@/components/cart/BuyNowButton";
 import { formatMoney } from "@/utils/formatMoney";
 
 export default function ShopifyProductDetail({ product }) {
   const variants = product.variants.nodes;
+
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
 
   const [selectedVariantId, setSelectedVariantId] = useState(
     () =>
@@ -14,6 +17,20 @@ export default function ShopifyProductDetail({ product }) {
       variants[0]?.id ??
       "",
   );
+
+  useEffect(() => {
+    function handlePageShow(event) {
+      if (event.persisted) {
+        setIsBuyingNow(false);
+      }
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   const selectedVariant =
     variants.find((variant) => variant.id === selectedVariantId) ?? null;
@@ -94,8 +111,9 @@ export default function ShopifyProductDetail({ product }) {
               <select
                 id="product-variant"
                 value={selectedVariantId}
+                disabled={isBuyingNow}
                 onChange={(event) => setSelectedVariantId(event.target.value)}
-                className="mt-2 min-h-11 w-full cursor-pointer rounded-lg border border-gray-600 bg-white px-3 py-2 text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                className="mt-2 min-h-11 w-full cursor-pointer rounded-lg border border-gray-600 bg-white px-3 py-2 text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {variants.map((variant) => (
                   <option key={variant.id} value={variant.id}>
@@ -138,13 +156,23 @@ export default function ShopifyProductDetail({ product }) {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 grid grid-cols-1 items-start gap-4 xl:grid-cols-2">
           <AddToCartButton
             key={selectedVariantId}
             variantId={selectedVariantId}
             productName={productName}
             available={available}
             requiresSellingPlan={product.requiresSellingPlan}
+            disabled={isBuyingNow}
+          />
+
+          <BuyNowButton
+            key={`buy-now-${selectedVariantId}`}
+            variantId={selectedVariantId}
+            available={available}
+            requiresSellingPlan={product.requiresSellingPlan}
+            isPending={isBuyingNow}
+            onPendingChange={setIsBuyingNow}
           />
         </div>
       </div>

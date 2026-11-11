@@ -9,6 +9,7 @@ export default function AddToCartButton({
   productName,
   available = false,
   requiresSellingPlan = false,
+  disabled = false,
 }) {
   const { addItem, isLoading, isBusy, cartError } = useCart();
   const { showToast } = useToast();
@@ -22,6 +23,7 @@ export default function AddToCartButton({
     !variantId ||
     !available ||
     requiresSellingPlan ||
+    disabled ||
     isPending ||
     isLoading ||
     isBusy ||
@@ -74,7 +76,7 @@ export default function AddToCartButton({
           ? "Legger til..."
           : !available
             ? "Utsolgt"
-            : "Legg i handlekurv"}
+            : "Legg til i handlekurv"}
       </button>
 
       {requiresSellingPlan && (
