@@ -1,6 +1,7 @@
 import "server-only";
 
 import { shopifyFetch } from "./client";
+import { sanitizeDescription } from "./sanitizeDescription";
 import {
   imageFields,
   productCardFragment,
@@ -87,6 +88,7 @@ export async function getProductByHandle(handle) {
         product(handle: $handle) {
           ...ProductCardFields
           description
+          descriptionHtml
           requiresSellingPlan
           seo {
             title
@@ -118,7 +120,12 @@ export async function getProductByHandle(handle) {
     variables: { handle: handle.trim() },
   });
 
-  return data.product;
+  if (!data.product) return null;
+
+  return {
+    ...data.product,
+    descriptionHtml: sanitizeDescription(data.product.descriptionHtml),
+  };
 }
 
 export async function getProductVariants(

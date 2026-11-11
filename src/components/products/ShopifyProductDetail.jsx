@@ -34,6 +34,11 @@ export default function ShopifyProductDetail({ product }) {
     variants.length > 1 ||
     (variants.length === 1 && variants[0].title !== "Default Title");
 
+  const productName =
+    selectedVariant && selectedVariant.title !== "Default Title"
+      ? `${product.title} – ${selectedVariant.title}`
+      : product.title;
+
   return (
     <section
       aria-labelledby="product-heading"
@@ -55,7 +60,7 @@ export default function ShopifyProductDetail({ product }) {
         )}
       </div>
 
-      <div className="flex flex-col justify-between rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-6 text-black">
+      <div className="flex min-w-0 flex-col justify-between rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-6 text-black">
         <div>
           <h1
             id="product-heading"
@@ -64,11 +69,18 @@ export default function ShopifyProductDetail({ product }) {
             {product.title}
           </h1>
 
-          {product.description && (
+          {product.descriptionHtml ? (
+            <div
+              className="product-description mt-6"
+              dangerouslySetInnerHTML={{
+                __html: product.descriptionHtml,
+              }}
+            />
+          ) : product.description ? (
             <p className="mt-6 whitespace-pre-line text-base leading-relaxed">
               {product.description}
             </p>
-          )}
+          ) : null}
 
           {showVariantSelector && (
             <div className="mt-6">
@@ -130,11 +142,7 @@ export default function ShopifyProductDetail({ product }) {
           <AddToCartButton
             key={selectedVariantId}
             variantId={selectedVariantId}
-            productName={
-              selectedVariant && selectedVariant.title !== "Default Title"
-                ? `${product.title} – ${selectedVariant.title}`
-                : product.title
-            }
+            productName={productName}
             available={available}
             requiresSellingPlan={product.requiresSellingPlan}
           />
