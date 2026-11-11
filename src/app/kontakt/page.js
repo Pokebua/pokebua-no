@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { IoMailOutline } from "react-icons/io5";
+import { IoMailOutline, IoCallOutline } from "react-icons/io5";
 
 export const metadata = {
   title: "Kontakt oss | Pokébua",
@@ -34,7 +34,7 @@ export default function ContactPage() {
 
           <p className="mt-4 text-base leading-relaxed sm:text-lg">
             Har du spørsmål om et produkt, en bestilling eller retur? Ta kontakt
-            med oss på e-post.
+            med oss på e-post eller telefon.
           </p>
         </header>
 
@@ -61,6 +61,37 @@ export default function ContactPage() {
             kort beskrivelse av hva du trenger hjelp med. Ikke send passord
             eller betalingskortopplysninger på e-post.
           </p>
+        </section>
+
+        <section
+          aria-labelledby="contact-company-heading"
+          className="mt-10 border-t border-[#001016]/20 pt-8"
+        >
+          <h2
+            id="contact-company-heading"
+            className="font-sans text-xl font-bold sm:text-2xl"
+          >
+            Kontakt- og firmaopplysninger
+          </h2>
+
+          <address className="mt-4 text-base not-italic leading-relaxed">
+            <p className="font-semibold">Pokébua AS</p>
+            <p className="mt-2">Org.nr. 935 401 151</p>
+
+            <p className="mt-2">
+              Døliringen 29
+              <br />
+              2050 Jessheim
+            </p>
+
+            <a
+              href="tel:+4792617247"
+              className={`mt-4 inline-flex min-h-11 items-center gap-3 text-lg font-semibold ${linkClassName}`}
+            >
+              <IoCallOutline aria-hidden="true" className="size-6 shrink-0" />
+              <span>+47 926 17 247</span>
+            </a>
+          </address>
         </section>
 
         <section

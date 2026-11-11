@@ -82,8 +82,9 @@ export default function Footer() {
 
             <address className="mt-4 text-sm not-italic leading-7 text-white/80">
               <p className="font-semibold text-white">Pokébua AS</p>
-              <p>Org.nr. XXX XXX XXX</p>
-              <p>Gateadresse 1 · 6000 Ålesund</p>
+              <p>Org.nr. 935 401 151</p>
+              <p>Døliringen 29</p>
+              <p>2050 Jessheim</p>
 
               <div className="mt-3 flex flex-col items-start">
                 <a
@@ -93,8 +94,8 @@ export default function Footer() {
                   kontakt@pokebua.no
                 </a>
 
-                <a href="tel:+4712345678" className={linkClassName}>
-                  +47 12 34 56 78
+                <a href="tel:+4792617247" className={linkClassName}>
+                  +47 926 17 247
                 </a>
               </div>
             </address>
