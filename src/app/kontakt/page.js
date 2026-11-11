@@ -48,11 +48,11 @@ export default function ContactPage() {
 
           <address className="mt-4 not-italic">
             <a
-              href="mailto:kontakt@pokebua.no"
+              href="mailto:mail@pokebua.no"
               className={`inline-flex min-h-11 max-w-full items-center gap-3 text-lg font-semibold ${linkClassName}`}
             >
               <IoMailOutline aria-hidden="true" className="size-6 shrink-0" />
-              <span className="break-all">kontakt@pokebua.no</span>
+              <span className="break-all">mail@pokebua.no</span>
             </a>
           </address>
 
