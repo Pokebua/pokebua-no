@@ -35,16 +35,15 @@ export default function ShopifyProductCard({
         </div>
 
         <div className="flex flex-1 flex-col p-4 text-white">
-          <Heading className="wrap-break-word font-sans text-base font-semibold leading-snug sm:text-lg">
+          <Heading className="wrap-break-word font-sans text-xl font-semibold leading-snug ">
             {product.title}
           </Heading>
 
           <div className="mt-auto pt-4">
-            <p className="flex flex-wrap items-baseline gap-x-1 text-xl font-bold leading-tight sm:text-2xl">
+            <p className="flex flex-wrap items-baseline gap-x-1 text-base font-semibold leading-tight sm:text-lg">
               {hasPriceRange && (
                 <span className="text-sm font-normal">Fra</span>
               )}
-
               <span>{formatMoney(minVariantPrice)}</span>
             </p>
 
