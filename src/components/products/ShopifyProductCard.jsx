@@ -15,7 +15,7 @@ export default function ShopifyProductCard({
   return (
     <Link
       href={`/produkt/${encodeURIComponent(product.handle)}`}
-      className="block h-full overflow-hidden rounded-2xl border-2 border-yellow-400 bg-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]"
+      className="group block h-full overflow-hidden rounded-2xl border-2 border-yellow-400 bg-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]"
     >
       <article className="flex h-full flex-col">
         <div className="relative aspect-square overflow-hidden bg-white">
@@ -34,23 +34,28 @@ export default function ShopifyProductCard({
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-3 text-white">
-          <Heading className="wrap-break-word text-base">
+        <div className="flex flex-1 flex-col p-4 text-white">
+          <Heading className="wrap-break-word font-sans text-base font-semibold leading-snug sm:text-lg">
             {product.title}
           </Heading>
 
-          <p className="mt-4 text-2xl font-bold">
-            {hasPriceRange && <span className="text-base">Fra </span>}
-            {formatMoney(minVariantPrice)}
-          </p>
+          <div className="mt-auto pt-4">
+            <p className="flex flex-wrap items-baseline gap-x-1 text-xl font-bold leading-tight sm:text-2xl">
+              {hasPriceRange && (
+                <span className="text-sm font-normal">Fra</span>
+              )}
 
-          {!product.availableForSale && (
-            <p className="mt-2 text-sm text-yellow-400">Utsolgt</p>
-          )}
+              <span>{formatMoney(minVariantPrice)}</span>
+            </p>
 
-          <span className="mt-auto pt-4 text-sm text-yellow-400">
-            Se produkt
-          </span>
+            {!product.availableForSale && (
+              <p className="mt-2 text-sm text-yellow-400">Utsolgt</p>
+            )}
+
+            <span className="mt-4 inline-block text-sm font-semibold text-yellow-400 group-hover:underline group-hover:underline-offset-4">
+              Se produkt
+            </span>
+          </div>
         </div>
       </article>
     </Link>
