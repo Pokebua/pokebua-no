@@ -155,3 +155,148 @@
 .product-description > :last-child {
   margin-bottom: 0;
 }
+
+/* Readable typography for Shopify policy pages. */
+.policy-content {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 1rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.policy-content p {
+  margin-block: 0 1.25rem;
+}
+
+.policy-content :where(h2, h3, h4, h5, h6) {
+  margin-block: 2.5rem 1rem;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 700;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.policy-content h2 {
+  font-size: 1.5rem;
+}
+
+.policy-content h3 {
+  font-size: 1.25rem;
+}
+
+.policy-content :where(h4, h5, h6) {
+  font-size: 1.125rem;
+}
+
+.policy-content :where(ul, ol) {
+  margin-block: 1rem 1.75rem;
+  padding-inline-start: 1.5rem;
+}
+
+.policy-content ul {
+  list-style-type: disc;
+}
+
+.policy-content ol {
+  list-style-type: decimal;
+}
+
+.policy-content li {
+  padding-inline-start: 0.25rem;
+}
+
+.policy-content li + li {
+  margin-top: 0.875rem;
+}
+
+.policy-content li > p {
+  margin-bottom: 0.5rem;
+}
+
+.policy-content li > :where(ul, ol) {
+  margin-block: 0.75rem;
+}
+
+.policy-content :where(strong, b) {
+  font-weight: 700;
+}
+
+.policy-content :where(em, i) {
+  font-style: italic;
+}
+
+.policy-content a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.policy-content a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.policy-content a:focus-visible {
+  outline: 2px solid #001016;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.policy-content blockquote {
+  margin-block: 1.5rem;
+  border-inline-start: 3px solid #f7b900;
+  padding-inline-start: 1.25rem;
+}
+
+.policy-content hr {
+  margin-block: 2rem;
+  border: 0;
+  border-top: 1px solid #00101633;
+}
+
+.policy-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.policy-content :where(th, td) {
+  border: 1px solid #00101633;
+  padding: 0.75rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+.policy-content th {
+  font-weight: 700;
+}
+
+.policy-content caption {
+  margin-bottom: 0.75rem;
+  text-align: start;
+  font-weight: 600;
+}
+
+.policy-content > :first-child {
+  margin-top: 0;
+}
+
+.policy-content > :last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .policy-content {
+    font-size: 1.125rem;
+  }
+
+  .policy-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .policy-content h3 {
+    font-size: 1.375rem;
+  }
+}
