@@ -26,8 +26,8 @@ const socialLinks = [
 
 const accountLinks = [
   {
-    href: "/konto",
-    label: "Min konto",
+    href: "https://shopify.com/74472587497/account/orders?locale=nb&region_country=NO",
+    label: "Min konto og mine bestillinger",
     Icon: CgProfile,
   },
 ];
@@ -277,7 +277,7 @@ export default function NavbarClient({ productLinks }) {
             />
 
             {accountLinks.map(({ href, label, Icon }) => (
-              <Link
+              <a
                 key={href}
                 href={href}
                 aria-label={label}
@@ -285,7 +285,7 @@ export default function NavbarClient({ productLinks }) {
                 className={iconClassName}
               >
                 <Icon aria-hidden="true" className="size-6" />
-              </Link>
+              </a>
             ))}
 
             <Cart isOpen={activePanel === "cart"} setIsOpen={setCartOpen} />
