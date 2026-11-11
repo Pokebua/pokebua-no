@@ -11,9 +11,5 @@ export default async function ProductPage({ params }) {
     notFound();
   }
 
-  return (
-    <div className="min-h-screen bg-[#FFF8E6]">
-      <ShopifyProductDetail key={product.id} product={product} />
-    </div>
-  );
+  return <ShopifyProductDetail key={product.id} product={product} />;
 }

@@ -74,8 +74,8 @@ export default function CartProvider({ children }) {
     function handlePageShow(event) {
       if (!event.persisted) return;
 
-      // Unlock and refresh when returning from checkout through
-      // the browser's back/forward cache.
+      // Restore controls when returning through the browser's
+      // back/forward cache.
       checkoutRef.current = false;
       setIsCheckingOut(false);
 
@@ -207,22 +207,62 @@ export default function CartProvider({ children }) {
     });
   }
 
+  async function openCheckout() {
+    const result = await fetchCartCheckout();
+
+    if (typeof result.checkoutUrl !== "string" || !result.checkoutUrl) {
+      throw new Error("Kunne ikke åpne kassen. Prøv igjen.");
+    }
+
+    acceptResponse(result);
+
+    // Keep controls locked while navigating to Shopify.
+    window.location.assign(result.checkoutUrl);
+  }
+
+  function buyNow(variantId) {
+    return enqueueOperation(async () => {
+      checkoutRef.current = true;
+      setIsCheckingOut(true);
+
+      let itemAdded = false;
+
+      try {
+        if (!cartRef.current) {
+          acceptResponse(await ensureCart());
+        }
+
+        const added = acceptResponse(await addCartVariant(variantId));
+        itemAdded = true;
+
+        if (added.warnings?.length) {
+          throw new Error(
+            `${added.warnings
+              .map((warning) => warning.message)
+              .join(" ")} Kontroller handlekurven før du går til kassen.`,
+          );
+        }
+
+        await openCheckout();
+      } catch (error) {
+        checkoutRef.current = false;
+        setIsCheckingOut(false);
+
+        // The button can retry checkout without adding another item.
+        error.itemAdded = itemAdded;
+
+        throw error;
+      }
+    });
+  }
+
   function checkout() {
     return enqueueOperation(async () => {
       checkoutRef.current = true;
       setIsCheckingOut(true);
 
       try {
-        const result = await fetchCartCheckout();
-
-        if (typeof result.checkoutUrl !== "string" || !result.checkoutUrl) {
-          throw new Error("Kunne ikke åpne kassen. Prøv igjen.");
-        }
-
-        acceptResponse(result);
-
-        // Keep the controls locked while navigating to Shopify.
-        window.location.assign(result.checkoutUrl);
+        await openCheckout();
       } catch (error) {
         checkoutRef.current = false;
         setIsCheckingOut(false);
@@ -231,23 +271,26 @@ export default function CartProvider({ children }) {
     });
   }
 
-  function reloadCart() {
+  async function reloadCart() {
     setPendingCount((count) => count + 1);
 
-    const operation = queueRef.current.then(() => {
+    const operation = queueRef.current.then(async () => {
       if (checkoutRef.current) return;
 
-      return restoreCart();
+      return await restoreCart();
     });
 
-    const completed = operation.finally(() => {
+    // Reserve this position in the queue before awaiting the result.
+    queueRef.current = operation.catch(() => {});
+
+    try {
+      return await operation;
+    } catch {
+      // Restore failures are displayed through cartError.
+      return undefined;
+    } finally {
       setPendingCount((count) => count - 1);
-    });
-
-    queueRef.current = completed.catch(() => {});
-
-    // Failure is shown in the panel.
-    return completed.catch(() => {});
+    }
   }
 
   return (
@@ -266,6 +309,7 @@ export default function CartProvider({ children }) {
         removeItem,
         reloadCart,
         checkout,
+        buyNow,
       }}
     >
       {children}

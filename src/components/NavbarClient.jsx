@@ -214,7 +214,7 @@ export default function NavbarClient({ productLinks }) {
 
   return (
     <header
-      className="relative z-30 border-y-2 border-[#f7b900] bg-[#001016] text-[#f7b900]"
+      className="sticky top-0 z-30 shrink-0 border-y-2 border-[#f7b900] bg-[#001016] text-[#f7b900]"
       onKeyDown={handleEscape}
     >
       <a

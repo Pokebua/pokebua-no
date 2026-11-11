@@ -10,17 +10,20 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="min-h-screen bg-white px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
+    <div className="px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
       <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
 
-      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-[#fff8e7] p-4 sm:p-6">
+      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-background p-4 sm:p-6">
         <HomeCategories collections={collections} />
 
         <section
           aria-labelledby="news-heading"
           className="mt-6 border-t-2 border-[#f7b900] pt-6"
         >
-          <h2 id="news-heading" className="mb-4 text-center text-xl font-bold">
+          <h2
+            id="news-heading"
+            className="mb-6 text-center text-4xl leading-tight"
+          >
             Nyheter
           </h2>
 

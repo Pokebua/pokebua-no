@@ -48,7 +48,7 @@ export default function HomeCategories({ collections }) {
     <section aria-labelledby="categories-heading">
       <h2
         id="categories-heading"
-        className="mb-4 text-center text-xl font-bold"
+        className="mb-6 text-center text-4xl leading-tight"
       >
         Kategorier
       </h2>
@@ -65,9 +65,9 @@ export default function HomeCategories({ collections }) {
             <li key={category.name} className="min-w-0">
               <Link
                 href={href}
-                className="block h-full overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]"
+                className="flex h-full flex-col overflow-hidden rounded-lg border-2 border-[#f7b900] bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]"
               >
-                <div className="relative aspect-square">
+                <div className="relative aspect-square shrink-0">
                   <Image
                     src={category.image}
                     alt=""
@@ -78,7 +78,7 @@ export default function HomeCategories({ collections }) {
                   />
                 </div>
 
-                <h3 className="flex min-h-11 items-center justify-center bg-[#001016] px-2 py-2 text-center text-xs font-bold text-[#f7b900]">
+                <h3 className="flex min-h-14 flex-1 items-center justify-center bg-[#001016] px-2 py-3 text-center text-sm leading-snug text-[#f7b900] sm:text-base">
                   {category.name}
                 </h3>
 
