@@ -1,10 +1,10 @@
 export const legalLinks = [
   {
-    href: "/kjopsvilkar",
+    href: "/policies/terms-of-service",
     label: "Kjøpsvilkår",
   },
   {
-    href: "/personvern",
+    href: "/policies/privacy-policy",
     label: "Personvern",
   },
   {
@@ -12,12 +12,12 @@ export const legalLinks = [
     label: "Informasjonskapsler",
   },
   {
-    href: "/angrerett",
-    label: "Angrerett",
+    href: "/policies/refund-policy",
+    label: "Angrerett og retur",
   },
   {
-    href: "/frakt-og-retur",
-    label: "Frakt og retur",
+    href: "/policies/shipping-policy",
+    label: "Frakt",
   },
   {
     href: "/kontakt",
