@@ -88,10 +88,10 @@ export default function Footer() {
 
               <div className="mt-3 flex flex-col items-start">
                 <a
-                  href="mailto:kontakt@pokebua.no"
+                  href="mailto:mail@pokebua.no"
                   className={`${linkClassName} break-all`}
                 >
-                  kontakt@pokebua.no
+                  mail@pokebua.no
                 </a>
 
                 <a href="tel:+4792617247" className={linkClassName}>
