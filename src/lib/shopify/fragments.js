@@ -11,6 +11,7 @@ export const productCardFragment = `
     handle
     title
     availableForSale
+    requiresSellingPlan
     featuredImage {
       ${imageFields}
     }
@@ -22,6 +23,16 @@ export const productCardFragment = `
       maxVariantPrice {
         amount
         currencyCode
+      }
+    }
+    quickAddVariants: variants(first: 2) {
+      nodes {
+        id
+        title
+        availableForSale
+      }
+      pageInfo {
+        hasNextPage
       }
     }
   }
