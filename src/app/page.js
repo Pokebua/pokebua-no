@@ -10,7 +10,7 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="px-4 pb-16 pt-16 text-[#001016] sm:px-8 md:pt-64">
+    <div className="px-4 pb-16 pt-16 text-[#001016] bg-[#E5DFCF] sm:px-8 md:pt-64">
       <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
 
       <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-background p-4 sm:p-6">
