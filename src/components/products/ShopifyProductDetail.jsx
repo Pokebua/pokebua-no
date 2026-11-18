@@ -44,6 +44,7 @@ export default function ShopifyProductDetail({ product }) {
     variants.find((variant) => variant.id === selectedVariantId) ?? null;
 
   const available = Boolean(selectedVariant?.availableForSale);
+  const isSoldOut = Boolean(selectedVariant) && !available;
   const price = selectedVariant?.price ?? null;
   const compareAtPrice = selectedVariant?.compareAtPrice ?? null;
 
@@ -146,6 +147,7 @@ export default function ShopifyProductDetail({ product }) {
         preferredImage={selectedVariant?.image}
         featuredImage={product.featuredImage}
         productName={product.title}
+        isSoldOut={isSoldOut}
       />
 
       <div className="flex min-w-0 flex-col justify-between rounded-2xl border-2 border-yellow-400 bg-yellow-100 p-6 text-black">
@@ -257,7 +259,7 @@ export default function ShopifyProductDetail({ product }) {
                   aria-describedby={
                     quantityMessage ? "product-quantity-message" : undefined
                   }
-                  className="min-h-11 w-24 rounded-lg border border-gray-600 bg-white px-2 text-center focus:outline-1 focus:-outline-offset-2 focus:outline-black"
+                  className="min-h-11 w-24 rounded-lg border border-gray-600 bg-white px-2 text-center focus:outline-1 focus:outline-offset-[-2px] focus:outline-black"
                 />
 
                 <button
