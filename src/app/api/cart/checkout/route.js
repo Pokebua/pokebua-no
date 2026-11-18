@@ -28,11 +28,22 @@ export async function POST(request) {
   }
 
   let twitchName;
+  let input;
 
-  if (request.body !== null) {
-    const input = await request.json().catch(() => null);
+  try {
+    // Some runtimes expose an empty stream even for a POST without content.
+    const body = (await request.text()).trim();
+    input = body ? JSON.parse(body) : {};
+  } catch {
+    return jsonResponse({ error: "Ugyldig forespørsel til kassen." }, 400);
+  }
 
-    if (!input || typeof input.twitchName !== "string") {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return jsonResponse({ error: "Ugyldig forespørsel til kassen." }, 400);
+  }
+
+  if (Object.hasOwn(input, "twitchName")) {
+    if (typeof input.twitchName !== "string") {
       return jsonResponse({ error: "Twitch-navnet må være tekst." }, 400);
     }
 
@@ -153,7 +164,6 @@ export async function POST(request) {
       );
     }
 
-    // Use only the checkout URL returned by Shopify.
     const checkoutUrl = new URL(cart.checkoutUrl);
 
     if (
@@ -172,11 +182,6 @@ export async function POST(request) {
   } catch {
     console.error("Shopify checkout request failed.");
 
-    return jsonResponse(
-      {
-        error: "Kunne ikke åpne kassen. Prøv igjen.",
-      },
-      502,
-    );
+    return jsonResponse({ error: "Kunne ikke åpne kassen. Prøv igjen." }, 502);
   }
 }
