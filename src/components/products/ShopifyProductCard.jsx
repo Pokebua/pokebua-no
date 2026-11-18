@@ -137,23 +137,22 @@ export default function ShopifyProductCard({
             )}
           </p>
 
-          <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3">
-            <Link
-              href={href}
-              aria-label={`${detailsLabel}: ${product.title}`}
-              className={`inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-yellow-400 hover:underline hover:underline-offset-4 ${focusClassName}`}
-            >
-              {detailsLabel}
-            </Link>
+          <Link
+            href={href}
+            aria-label={`${detailsLabel}: ${product.title}`}
+            className={`mt-2 inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-yellow-400 hover:underline hover:underline-offset-4 ${focusClassName}`}
+          >
+            {detailsLabel}
+          </Link>
 
-            {canQuickAdd && (
-              <QuickAddToCartButton
-                variantId={variant.id}
-                productName={productName}
-                available={canQuickAdd}
-              />
-            )}
-          </div>
+          {canQuickAdd && (
+            <QuickAddToCartButton
+              variantId={variant.id}
+              productName={productName}
+              available={canQuickAdd}
+              quantityAvailable={variant.quantityAvailable}
+            />
+          )}
         </div>
       </div>
     </article>

@@ -30,6 +30,7 @@ export const productCardFragment = `
         id
         title
         availableForSale
+        quantityAvailable
         price {
           amount
           currencyCode
