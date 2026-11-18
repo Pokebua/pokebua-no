@@ -13,6 +13,7 @@ const variantFields = `
   id
   title
   availableForSale
+  quantityAvailable
   selectedOptions {
     name
     value

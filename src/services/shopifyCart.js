@@ -58,12 +58,12 @@ export function ensureCart() {
   });
 }
 
-export function addCartVariant(variantId) {
+export function addCartVariant(variantId, quantity = 1) {
   return cartRequest("/api/cart/lines", {
     method: "POST",
     body: {
       variantId,
-      quantity: 1,
+      quantity,
     },
   });
 }

@@ -5,8 +5,10 @@ import useCart from "@/hooks/useCart";
 
 export default function BuyNowButton({
   variantId,
+  quantity = 1,
   available,
   requiresSellingPlan,
+  disabled = false,
   isPending,
   onPendingChange,
 }) {
@@ -18,7 +20,7 @@ export default function BuyNowButton({
 
   const unavailable =
     !variantId ||
-    (!itemAdded && (!available || requiresSellingPlan)) ||
+    (!itemAdded && (!available || requiresSellingPlan || disabled)) ||
     isPending ||
     isLoading ||
     isBusy ||
@@ -35,7 +37,7 @@ export default function BuyNowButton({
       if (itemAdded) {
         await checkout();
       } else {
-        await buyNow(variantId);
+        await buyNow(variantId, quantity);
       }
     } catch (error) {
       if (error.itemAdded) {

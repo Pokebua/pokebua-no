@@ -15,6 +15,16 @@ export const CartContext = createContext(null);
 const RECOVERY_MESSAGE =
   "Handlekurven må lastes inn på nytt før du gjør flere endringer.";
 
+function validateQuantity(quantity) {
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1 ||
+    quantity > 2147483647
+  ) {
+    throw new Error("Antallet må være et gyldig positivt heltall.");
+  }
+}
+
 export default function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -159,14 +169,18 @@ export default function CartProvider({ children }) {
     return data;
   }
 
-  function addItem(variantId) {
-    return enqueueOperation(async () => {
-      if (!cartRef.current) {
-        acceptResponse(await ensureCart());
-      }
+  async function addVariantToCart(variantId, quantity) {
+    validateQuantity(quantity);
 
-      return acceptResponse(await addCartVariant(variantId));
-    });
+    if (!cartRef.current) {
+      acceptResponse(await ensureCart());
+    }
+
+    return acceptResponse(await addCartVariant(variantId, quantity));
+  }
+
+  function addItem(variantId, quantity = 1) {
+    return enqueueOperation(() => addVariantToCart(variantId, quantity));
   }
 
   function changeQuantity(lineId, change) {
@@ -182,14 +196,7 @@ export default function CartProvider({ children }) {
       }
 
       const nextQuantity = line.quantity + change;
-
-      if (
-        !Number.isSafeInteger(nextQuantity) ||
-        nextQuantity < 1 ||
-        nextQuantity > 2147483647
-      ) {
-        throw new Error("Antallet må være et gyldig positivt heltall.");
-      }
+      validateQuantity(nextQuantity);
 
       return acceptResponse(await updateCartQuantity(lineId, nextQuantity));
     });
@@ -220,7 +227,7 @@ export default function CartProvider({ children }) {
     window.location.assign(result.checkoutUrl);
   }
 
-  function buyNow(variantId) {
+  function buyNow(variantId, quantity = 1) {
     return enqueueOperation(async () => {
       checkoutRef.current = true;
       setIsCheckingOut(true);
@@ -228,11 +235,7 @@ export default function CartProvider({ children }) {
       let itemAdded = false;
 
       try {
-        if (!cartRef.current) {
-          acceptResponse(await ensureCart());
-        }
-
-        const added = acceptResponse(await addCartVariant(variantId));
+        const added = await addVariantToCart(variantId, quantity);
         itemAdded = true;
 
         if (added.warnings?.length) {
@@ -248,7 +251,7 @@ export default function CartProvider({ children }) {
         checkoutRef.current = false;
         setIsCheckingOut(false);
 
-        // The button can retry checkout without adding another item.
+        // The button can retry checkout without adding more items.
         error.itemAdded = itemAdded;
 
         throw error;
