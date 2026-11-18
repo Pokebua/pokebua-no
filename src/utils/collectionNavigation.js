@@ -4,34 +4,40 @@ function normalizeLabel(value) {
 
 export function createCollectionNavigation(collections) {
   const links = [];
-  const accessories = [];
   const seenHandles = new Set();
+  let gradingLink;
 
-  for (const collection of collections) {
-    const { handle, title } = collection;
-    const normalizedTitle = normalizeLabel(title);
-
+  for (const { handle, title } of collections) {
     if (seenHandles.has(handle)) continue;
     seenHandles.add(handle);
 
-    // Use our /produkter page as the single all-products destination.
-    if (handle === "all" || normalizedTitle === "alle produkter") {
+    const normalizedTitle = normalizeLabel(title);
+
+    if (
+      handle === "all" ||
+      normalizedTitle === "alle produkter" ||
+      handle === "forhandsbestilling" ||
+      normalizedTitle === "tilbehør"
+    ) {
       continue;
     }
 
-    const isAccessories = normalizedTitle === "tilbehør";
+    const href = `/produkter/${encodeURIComponent(handle)}`;
 
-    const link = {
-      href: `/produkter/${encodeURIComponent(handle)}`,
-      label: isAccessories ? "Tilbehør" : title,
-      separated: isAccessories,
-    };
-
-    if (isAccessories) {
-      accessories.push(link);
-    } else {
-      links.push(link);
+    if (handle === "cgc-gradering") {
+      gradingLink = {
+        href,
+        label: "Gradering",
+        separated: true,
+      };
+      continue;
     }
+
+    links.push({
+      href,
+      label: title,
+      separated: false,
+    });
   }
 
   return [
@@ -41,6 +47,6 @@ export function createCollectionNavigation(collections) {
       separated: false,
     },
     ...links,
-    ...accessories,
+    ...(gradingLink ? [gradingLink] : []),
   ];
 }

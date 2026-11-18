@@ -20,17 +20,17 @@ const homepageCategories = [
   },
   {
     name: "Engelsk",
-    handle: null,
+    collectionTitle: "Engelsk",
     image: "/images/engelsk.png",
   },
   {
     name: "Japansk",
-    handle: null,
+    collectionTitle: "Japansk",
     image: "/images/japansk.png",
   },
   {
     name: "Kinesisk",
-    handle: null,
+    collectionTitle: "Kinesisk",
     image: "/images/kinesisk.png",
   },
   {
@@ -40,9 +40,20 @@ const homepageCategories = [
   },
 ];
 
+function normalizeTitle(title) {
+  return title.trim().toLocaleLowerCase("nb-NO");
+}
+
 export default function HomeCategories({ collections }) {
   const collectionsByHandle = new Map(
     collections.map((collection) => [collection.handle, collection]),
+  );
+
+  const collectionsByTitle = new Map(
+    collections.map((collection) => [
+      normalizeTitle(collection.title),
+      collection,
+    ]),
   );
 
   return (
@@ -56,9 +67,11 @@ export default function HomeCategories({ collections }) {
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
         {homepageCategories.map((category) => {
-          const collection = collectionsByHandle.get(category.handle);
-          const image = category.image ?? collection?.image?.url;
+          const collection = category.collectionTitle
+            ? collectionsByTitle.get(normalizeTitle(category.collectionTitle))
+            : collectionsByHandle.get(category.handle);
 
+          const image = category.image ?? collection?.image?.url;
           const href = collection
             ? `/produkter/${encodeURIComponent(collection.handle)}`
             : "/produkter";

@@ -1,9 +1,4 @@
 const sortOptions = {
-  "collection-default": {
-    label: "Samlingens rekkefølge",
-    sortKey: "COLLECTION_DEFAULT",
-    reverse: false,
-  },
   "best-selling": {
     label: "Bestselger",
     sortKey: "BEST_SELLING",
@@ -33,19 +28,16 @@ const sortOptions = {
   },
 };
 
+const options = Object.entries(sortOptions).map(([value, { label }]) => ({
+  value,
+  label,
+}));
+
 export function getProductSort(value, { isCollection = false } = {}) {
-  const defaultSort = isCollection ? "collection-default" : "best-selling";
-
-  const options = Object.entries(sortOptions)
-    .filter(([key]) => isCollection || key !== "collection-default")
-    .map(([key, option]) => ({
-      value: key,
-      label: option.label,
-    }));
-
-  const sort = options.some((option) => option.value === value)
-    ? value
-    : defaultSort;
+  const sort =
+    typeof value === "string" && Object.hasOwn(sortOptions, value)
+      ? value
+      : "best-selling";
 
   const selected = sortOptions[sort];
 
