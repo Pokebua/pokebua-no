@@ -87,8 +87,9 @@ export function deleteCartLine(lineId) {
   });
 }
 
-export function fetchCartCheckout() {
+export function fetchCartCheckout(twitchName) {
   return cartRequest("/api/cart/checkout", {
     method: "POST",
+    body: twitchName === undefined ? undefined : { twitchName },
   });
 }

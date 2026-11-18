@@ -32,6 +32,7 @@ export default function CartProvider({ children }) {
   const [cartError, setCartError] = useState("");
   const [warnings, setWarnings] = useState([]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [twitchNameInput, setTwitchNameInput] = useState(null);
 
   const cartRef = useRef(null);
   const restorationRef = useRef(null);
@@ -42,6 +43,10 @@ export default function CartProvider({ children }) {
   const applyCart = useCallback((nextCart) => {
     cartRef.current = nextCart;
     setCart(nextCart);
+
+    if (!nextCart?.totalQuantity) {
+      setTwitchNameInput(null);
+    }
   }, []);
 
   const restoreCart = useCallback(() => {
@@ -215,13 +220,14 @@ export default function CartProvider({ children }) {
   }
 
   async function openCheckout() {
-    const result = await fetchCartCheckout();
+    const result = await fetchCartCheckout(twitchNameInput ?? undefined);
 
     if (typeof result.checkoutUrl !== "string" || !result.checkoutUrl) {
       throw new Error("Kunne ikke åpne kassen. Prøv igjen.");
     }
 
     acceptResponse(result);
+    setTwitchNameInput(null);
 
     // Keep controls locked while navigating to Shopify.
     window.location.assign(result.checkoutUrl);
@@ -305,6 +311,8 @@ export default function CartProvider({ children }) {
         isLoading,
         isBusy: pendingCount > 0 || isCheckingOut,
         isCheckingOut,
+        twitchName: twitchNameInput ?? cart?.twitchName ?? "",
+        setTwitchName: setTwitchNameInput,
         cartError,
         warnings,
         addItem,

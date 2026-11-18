@@ -44,6 +44,7 @@ export function toPublicCart(cart) {
 
   return {
     totalQuantity: cart.totalQuantity,
+    twitchName: cart.twitchNameAttribute?.value ?? "",
     cost: cart.cost,
     lines: cart.lines.nodes,
   };
