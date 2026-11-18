@@ -259,7 +259,7 @@ export default function ShopifyProductDetail({ product }) {
                   aria-describedby={
                     quantityMessage ? "product-quantity-message" : undefined
                   }
-                  className="min-h-11 w-24 rounded-lg border border-gray-600 bg-white px-2 text-center focus:outline-1 focus:outline-offset-[-2px] focus:outline-black"
+                  className="min-h-11 w-24 rounded-lg border border-gray-600 bg-white px-2 text-center focus:outline-1 focus:-outline-offset-2 focus:outline-black"
                 />
 
                 <button

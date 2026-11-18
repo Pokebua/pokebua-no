@@ -6,6 +6,21 @@ import { formatMoney } from "@/utils/formatMoney";
 const focusClassName =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f7b900]";
 
+const badgeClassName =
+  "pointer-events-none absolute left-3 top-3 rounded-lg px-4 py-2 text-base font-bold uppercase tracking-wide sm:text-lg";
+
+function isDiscounted(variant) {
+  const { availableForSale, price, compareAtPrice } = variant;
+
+  return (
+    availableForSale &&
+    price &&
+    compareAtPrice &&
+    price.currencyCode === compareAtPrice.currencyCode &&
+    Number(compareAtPrice.amount) > Number(price.amount)
+  );
+}
+
 export default function ShopifyProductCard({
   product,
   headingAs: Heading = "h2",
@@ -25,6 +40,16 @@ export default function ShopifyProductCard({
     product.quickAddVariants?.pageInfo?.hasNextPage === false;
 
   const variant = hasSingleVariant ? variants[0] : null;
+  const discountedVariants = isSoldOut ? [] : variants.filter(isDiscounted);
+  const isOnSale = discountedVariants.length > 0;
+
+  const displayedSaleVariant = discountedVariants.find(
+    ({ price }) =>
+      price.currencyCode === minVariantPrice.currencyCode &&
+      Number(price.amount) === Number(minVariantPrice.amount),
+  );
+
+  const oldPrice = displayedSaleVariant?.compareAtPrice;
 
   const canQuickAdd =
     !isSoldOut &&
@@ -40,6 +65,8 @@ export default function ShopifyProductCard({
     !isSoldOut && !hasSingleVariant && variants.length > 0
       ? "Velg variant"
       : "Se produkt";
+
+  const badgeLabel = isSoldOut ? "Utsolgt" : isOnSale ? "Tilbud" : null;
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border-2 border-yellow-400 bg-black">
@@ -67,12 +94,16 @@ export default function ShopifyProductCard({
           )}
         </Link>
 
-        {isSoldOut && (
+        {badgeLabel && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-3 rounded-lg bg-[#001016] px-4 py-2 text-base font-bold uppercase tracking-wide text-white sm:text-lg"
+            className={`${badgeClassName} ${
+              isSoldOut
+                ? "bg-[#001016] text-white"
+                : "bg-[#f7b900] text-[#001016]"
+            }`}
           >
-            Utsolgt
+            {badgeLabel}
           </span>
         )}
       </div>
@@ -84,14 +115,26 @@ export default function ShopifyProductCard({
             className={`rounded-sm hover:underline hover:underline-offset-4 ${focusClassName}`}
           >
             {product.title}
-            {isSoldOut && <span className="sr-only"> – Utsolgt</span>}
+            {badgeLabel && <span className="sr-only"> – {badgeLabel}</span>}
           </Link>
         </Heading>
 
         <div className="mt-auto pt-4">
-          <p className="flex flex-wrap items-baseline gap-x-1 text-base font-semibold leading-tight sm:text-lg">
-            {hasPriceRange && <span className="text-sm font-normal">Fra</span>}
-            <span>{formatMoney(minVariantPrice)}</span>
+          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-base font-semibold leading-tight sm:text-lg">
+            <span>
+              {oldPrice && <span className="sr-only">Tilbudspris: </span>}
+              {hasPriceRange && (
+                <span className="mr-1 text-sm font-normal">Fra</span>
+              )}
+              {formatMoney(minVariantPrice)}
+            </span>
+
+            {oldPrice && (
+              <span className="text-sm font-normal text-gray-300">
+                <span className="sr-only">Førpris: </span>
+                <del>{formatMoney(oldPrice)}</del>
+              </span>
+            )}
           </p>
 
           <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3">

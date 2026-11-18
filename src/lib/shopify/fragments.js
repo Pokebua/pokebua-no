@@ -30,6 +30,14 @@ export const productCardFragment = `
         id
         title
         availableForSale
+        price {
+          amount
+          currencyCode
+        }
+        compareAtPrice {
+          amount
+          currencyCode
+        }
       }
       pageInfo {
         hasNextPage
