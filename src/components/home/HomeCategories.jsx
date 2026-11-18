@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoCubeOutline } from "react-icons/io5";
 
+const categoryImageSizes =
+  "(min-width: 1216px) 143px, (min-width: 1024px) calc((100vw - 216px) / 7), (min-width: 640px) calc(25vw - 42px), calc(50vw - 28px)";
+
 const homepageCategories = [
   {
     name: "Boosterpacks",
@@ -66,7 +69,7 @@ export default function HomeCategories({ collections }) {
       </h2>
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-        {homepageCategories.map((category) => {
+        {homepageCategories.map((category, index) => {
           const collection = category.collectionTitle
             ? collectionsByTitle.get(normalizeTitle(category.collectionTitle))
             : collectionsByHandle.get(category.handle);
@@ -88,7 +91,9 @@ export default function HomeCategories({ collections }) {
                       src={image}
                       alt=""
                       fill
-                      sizes="(min-width: 1024px) 160px, (min-width: 640px) 23vw, 45vw"
+                      sizes={categoryImageSizes}
+                      loading={index < 2 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : undefined}
                       className="object-contain"
                     />
                   ) : (
