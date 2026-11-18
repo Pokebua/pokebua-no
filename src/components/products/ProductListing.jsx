@@ -1,39 +1,18 @@
-import Link from "next/link";
+import Pagination from "@/components/Pagination";
 import ShopifyProductCard from "./ShopifyProductCard";
-
-const paginationClassName =
-  "inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-yellow-400 bg-[#001016] px-5 py-3 font-semibold text-white hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]";
 
 export default function ProductListing({
   title,
   description,
   products,
   basePath,
-  hasCursor,
+  currentPage,
+  totalPages,
   sort,
   sortOptions,
 }) {
-  const { nodes, pageInfo } = products;
-
-  function getPageHref(after) {
-    const params = new URLSearchParams();
-
-    if (sort) {
-      params.set("sort", sort);
-    }
-
-    if (after) {
-      params.set("after", after);
-    }
-
-    return params.size > 0 ? `${basePath}?${params}` : basePath;
-  }
-
-  const firstHref = getPageHref();
-  const nextHref =
-    pageInfo.hasNextPage && pageInfo.endCursor
-      ? getPageHref(pageInfo.endCursor)
-      : null;
+  const { nodes } = products;
+  const isOutOfRange = currentPage > Math.max(totalPages, 1);
 
   return (
     <div className="min-h-screen bg-[#FFF8E6] px-4 py-12 sm:px-8">
@@ -61,7 +40,7 @@ export default function ProductListing({
                 id="product-sort"
                 name="sort"
                 defaultValue={sort}
-                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#001016]"
+                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#001016]"
               >
                 {sortOptions.map(({ value, label }) => (
                   <option key={value} value={value}>
@@ -86,7 +65,7 @@ export default function ProductListing({
           </p>
         )}
 
-        {nodes.length > 0 ? (
+        {nodes.length > 0 && (
           <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {nodes.map((product) => (
               <li key={product.id} className="min-w-0">
@@ -94,28 +73,19 @@ export default function ProductListing({
               </li>
             ))}
           </ul>
-        ) : (
+        )}
+
+        {nodes.length === 0 && !isOutOfRange && (
           <p className="mt-8 text-[#001016]">Ingen produkter å vise.</p>
         )}
 
-        {(hasCursor || nextHref) && (
-          <nav
-            aria-label="Produktsider"
-            className="mt-8 flex flex-wrap justify-center gap-4"
-          >
-            {hasCursor && (
-              <Link href={firstHref} className={paginationClassName}>
-                Første side
-              </Link>
-            )}
-
-            {nextHref && (
-              <Link href={nextHref} rel="next" className={paginationClassName}>
-                Neste side
-              </Link>
-            )}
-          </nav>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={basePath}
+          queryParams={{ sort }}
+          label="Produktsider"
+        />
       </section>
     </div>
   );
