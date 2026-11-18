@@ -15,7 +15,7 @@ export default function ProductListing({
   const isOutOfRange = currentPage > Math.max(totalPages, 1);
 
   return (
-    <div className="min-h-screen bg-[#FFF8E6] px-4 py-12 sm:px-8">
+    <div className="min-h-screen bg-[#FFF8E6] px-2 py-12 sm:px-8">
       <section aria-labelledby="products-heading" className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
           <h1
@@ -40,7 +40,7 @@ export default function ProductListing({
                 id="product-sort"
                 name="sort"
                 defaultValue={sort}
-                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#001016]"
+                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#001016]"
               >
                 {sortOptions.map(({ value, label }) => (
                   <option key={value} value={value}>
@@ -66,7 +66,7 @@ export default function ProductListing({
         )}
 
         {nodes.length > 0 && (
-          <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-8 grid grid-cols-2 gap-2 sm:gap-6 lg:grid-cols-3">
             {nodes.map((product) => (
               <li key={product.id} className="min-w-0">
                 <ShopifyProductCard product={product} />

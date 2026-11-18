@@ -7,10 +7,8 @@ import useToast from "@/hooks/useToast";
 
 const MAX_QUANTITY = 2147483647;
 
-const focusClassName =
-  "focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#f7b900]";
-
-const stepClassName = `grid size-11 shrink-0 place-items-center rounded-lg border border-white/50 text-lg font-semibold text-white enabled:cursor-pointer enabled:hover:bg-white/15 disabled:opacity-50 ${focusClassName}`;
+const quantityButtonClassName =
+  "inline-flex h-11 w-full min-w-0 items-center justify-center rounded-md border border-white/50 bg-black text-lg font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#f7b900] disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function QuickAddToCartButton({
   variantId,
@@ -18,14 +16,15 @@ export default function QuickAddToCartButton({
   available,
   quantityAvailable,
 }) {
-  const { addItem, lines, isLoading, isBusy, cartError } = useCart();
+  const { addItem, lines = [], isLoading, isBusy, cartError } = useCart();
   const { showToast } = useToast();
+
   const inputId = useId();
   const messageId = `${inputId}-message`;
-
   const pendingRef = useRef(false);
-  const [isPending, setIsPending] = useState(false);
+
   const [quantityInput, setQuantityInput] = useState("1");
+  const [isPending, setIsPending] = useState(false);
   const [triedToExceedLimit, setTriedToExceedLimit] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -38,12 +37,16 @@ export default function QuickAddToCartButton({
 
   const hasStockCount = Number.isInteger(quantityAvailable);
   const maxQuantity = hasStockCount
-    ? Math.min(MAX_QUANTITY, Math.max(0, quantityAvailable - quantityInCart))
+    ? Math.max(0, Math.min(MAX_QUANTITY, quantityAvailable - quantityInCart))
     : MAX_QUANTITY;
 
   const quantity = Number(quantityInput);
+
   const quantityIsValid =
-    Number.isSafeInteger(quantity) && quantity >= 1 && quantity <= maxQuantity;
+    /^\d+$/.test(quantityInput) &&
+    Number.isSafeInteger(quantity) &&
+    quantity >= 1 &&
+    quantity <= maxQuantity;
 
   const controlsDisabled =
     !variantId ||
@@ -53,60 +56,46 @@ export default function QuickAddToCartButton({
     isBusy ||
     Boolean(cartError);
 
-  const unavailable = controlsDisabled || !quantityIsValid;
+  const addDisabled = controlsDisabled || !quantityIsValid;
 
   let quantityMessage = "";
 
-  if (maxQuantity === 0) {
+  if (available && maxQuantity === 0) {
     quantityMessage =
       quantityInCart > 0
         ? "Du har allerede hele tilgjengelige antallet i handlekurven."
         : "Ingen flere på lager.";
-  } else if (quantity > maxQuantity || triedToExceedLimit) {
+  } else if (triedToExceedLimit || quantity > maxQuantity) {
     if (!hasStockCount) {
-      quantityMessage = `Maksimalt antall er ${MAX_QUANTITY} stk.`;
+      quantityMessage = `Maks ${MAX_QUANTITY} stk. om gangen.`;
     } else if (quantityInCart > 0) {
-      quantityMessage = `Du kan legge til maks ${maxQuantity} stk. til.`;
+      quantityMessage = `Du kan legge til ${maxQuantity} stk. til.`;
     } else {
       quantityMessage = `Kun ${maxQuantity} stk. på lager.`;
     }
-  } else if (!quantityIsValid) {
+  } else if (!quantityIsValid && available) {
     quantityMessage = "Skriv inn et heltall på minst 1.";
   }
 
-  const label = isPending
-    ? `Legger ${productName} i handlekurven`
-    : cartError
-      ? "Åpne handlekurven og last den inn på nytt"
-      : `Legg ${productName} i handlekurven`;
-
   function changeQuantity(value) {
-    setQuantityInput(value.replace(/[^0-9]/g, ""));
-    setTriedToExceedLimit(false);
-    setError("");
+    if (!/^\d*$/.test(value)) return;
+
+    const exceedsLimit = Number(value) > maxQuantity;
+
+    setTriedToExceedLimit(exceedsLimit);
+    setQuantityInput(exceedsLimit ? String(maxQuantity) : value);
     setNotice("");
-  }
-
-  function decreaseQuantity() {
-    changeQuantity(String(Math.min(quantity - 1, maxQuantity)));
-  }
-
-  function increaseQuantity() {
-    if (quantity >= maxQuantity) {
-      setTriedToExceedLimit(true);
-      return;
-    }
-
-    changeQuantity(String(quantity + 1));
+    setError("");
   }
 
   async function handleAdd() {
-    if (pendingRef.current || unavailable) return;
+    if (pendingRef.current || addDisabled) return;
 
     pendingRef.current = true;
     setIsPending(true);
     setError("");
     setNotice("");
+    setTriedToExceedLimit(false);
 
     try {
       const result = await addItem(variantId, quantity);
@@ -116,14 +105,11 @@ export default function QuickAddToCartButton({
         return;
       }
 
-      changeQuantity("1");
+      setQuantityInput("1");
 
       showToast({
         type: "success",
-        message:
-          quantity === 1
-            ? `${productName} er lagt i handlekurven.`
-            : `${quantity} stk. av ${productName} er lagt i handlekurven.`,
+        message: `${productName} er lagt i handlekurven.`,
       });
     } catch (error) {
       setError(error.message || "Kunne ikke legge varen i handlekurven.");
@@ -133,99 +119,87 @@ export default function QuickAddToCartButton({
     }
   }
 
+  const cartLabel = isPending
+    ? `Legger ${productName} i handlekurven`
+    : `Legg til ${productName} i handlekurven`;
+
   return (
-    <div className="min-w-0">
-      <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
+    <div className="col-span-full w-full min-w-0">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-semibold text-white"
+      >
         Antall<span className="sr-only"> for {productName}</span>
       </label>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          aria-label={`Reduser antall for ${productName}`}
-          disabled={controlsDisabled || maxQuantity === 0 || quantity <= 1}
-          onClick={decreaseQuantity}
-          className={stepClassName}
-        >
-          −
-        </button>
+      <div className="mt-1 flex min-w-0 flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+        <span className="grid w-full min-w-0 grid-cols-3 gap-1 sm:w-36">
+          <button
+            type="button"
+            aria-label={`Reduser antall for ${productName}`}
+            disabled={controlsDisabled || quantity <= 1 || maxQuantity === 0}
+            onClick={() =>
+              changeQuantity(String(Math.min(quantity - 1, maxQuantity)))
+            }
+            className={quantityButtonClassName}
+          >
+            −
+          </button>
 
-        <input
-          id={inputId}
-          type="text"
-          inputMode="numeric"
-          value={quantityInput}
-          onChange={(event) => changeQuantity(event.target.value)}
-          disabled={controlsDisabled || maxQuantity === 0}
-          aria-invalid={!quantityIsValid && maxQuantity > 0}
-          aria-describedby={quantityMessage ? messageId : undefined}
-          className={`h-11 w-16 shrink-0 rounded-lg border border-white/50 bg-[#001016] px-2 text-center text-white disabled:opacity-50 ${focusClassName}`}
-        />
+          <input
+            id={inputId}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={quantityInput}
+            disabled={controlsDisabled || maxQuantity === 0}
+            onChange={(event) => changeQuantity(event.target.value)}
+            aria-invalid={!quantityIsValid && maxQuantity > 0}
+            aria-describedby={quantityMessage ? messageId : undefined}
+            className="h-11 w-full min-w-0 rounded-md border border-white/50 bg-[#001016] px-0 text-center text-base font-semibold text-white focus-visible:outline-1 focus-visible:outline-[#f7b900] disabled:opacity-40"
+          />
 
-        <button
-          type="button"
-          aria-label={`Øk antall for ${productName}`}
-          disabled={controlsDisabled || maxQuantity === 0}
-          onClick={increaseQuantity}
-          className={stepClassName}
-        >
-          +
-        </button>
+          <button
+            type="button"
+            aria-label={`Øk antall for ${productName}`}
+            disabled={controlsDisabled || maxQuantity === 0}
+            onClick={() => changeQuantity(String(quantity + 1))}
+            className={quantityButtonClassName}
+          >
+            +
+          </button>
+        </span>
 
         <button
           type="button"
           onClick={handleAdd}
-          aria-label={label}
-          title={label}
-          aria-disabled={unavailable}
-          aria-describedby={quantityMessage ? messageId : undefined}
-          className={`grid size-11 shrink-0 place-items-center rounded-lg bg-[#f7b900] text-[#001016] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#001016] ${
-            isPending
-              ? "cursor-wait opacity-70"
-              : unavailable
-                ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer hover:bg-[#ffd04a]"
-          }`}
+          disabled={addDisabled}
+          aria-label={cartLabel}
+          title={cartLabel}
+          className="inline-flex h-11 w-full min-w-0 items-center justify-center gap-1.5 rounded-md bg-[#f7b900] px-2 text-sm font-semibold text-[#001016] hover:bg-[#ffd04a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7b900] disabled:cursor-not-allowed disabled:opacity-50 sm:w-11 sm:shrink-0 sm:px-0"
         >
           {isPending ? (
-            <span aria-hidden="true" className="text-xl font-bold">
-              …
-            </span>
+            <span aria-hidden="true">…</span>
           ) : (
-            <IoCartOutline aria-hidden="true" className="size-6" />
+            <>
+              <IoCartOutline aria-hidden="true" className="size-5 shrink-0" />
+              <span className="sm:sr-only">Legg til</span>
+            </>
           )}
         </button>
       </div>
 
-      <div className="mt-1 grid min-h-5 wrap-break-word text-sm leading-5">
+      <div className="mt-1 min-h-5 wrap-break-word text-sm leading-5">
         <p
           id={messageId}
           role="status"
           aria-atomic="true"
-          className={`col-start-1 row-start-1 text-yellow-400 ${
-            error || notice ? "sr-only" : ""
-          }`}
+          className="text-yellow-400"
         >
-          {quantityMessage}
+          {!error && (notice || quantityMessage)}
         </p>
 
-        <p
-          role="status"
-          aria-atomic="true"
-          className={
-            notice && !error
-              ? "col-start-1 row-start-1 text-yellow-400"
-              : "sr-only"
-          }
-        >
-          {isPending ? `Legger ${productName} i handlekurven.` : notice}
-        </p>
-
-        <p
-          role="alert"
-          aria-atomic="true"
-          className={error ? "col-start-1 row-start-1 text-red-300" : "sr-only"}
-        >
+        <p role="alert" aria-atomic="true" className="text-red-300">
           {error}
         </p>
       </div>

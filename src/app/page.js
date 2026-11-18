@@ -10,10 +10,10 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="bg-[#E5DFCF] px-4 pb-16 pt-8 text-[#001016] sm:px-8 md:pt-12">
+    <div className="bg-[#E5DFCF] px-2 pb-16 pt-8 text-[#001016] sm:px-8 md:pt-12">
       <h1 className="sr-only">Pokébua – Pokémonkort og samleprodukter</h1>
 
-      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-background p-4 sm:p-6">
+      <div className="mx-auto max-w-6xl rounded-xl border-2 border-[#f7b900] bg-background p-2 sm:p-6">
         <HomeCategories collections={collections} />
 
         <section
@@ -28,7 +28,7 @@ export default async function Home() {
           </h2>
 
           {newestProducts.length > 0 ? (
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
               {newestProducts.map((product) => (
                 <li key={product.id} className="min-w-0">
                   <ShopifyProductCard product={product} headingAs="h3" />
