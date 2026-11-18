@@ -40,7 +40,7 @@ export default function ProductListing({
                 id="product-sort"
                 name="sort"
                 defaultValue={sort}
-                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#001016]"
+                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#001016]"
               >
                 {sortOptions.map(({ value, label }) => (
                   <option key={value} value={value}>
