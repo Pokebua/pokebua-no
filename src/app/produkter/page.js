@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/shopify/products";
+import { getProductSort } from "@/lib/shopify/productSort";
 import ProductListing from "@/components/products/ProductListing";
 
 export const metadata = {
@@ -12,7 +13,14 @@ export default async function ProductsPage({ searchParams }) {
       ? parameters.after
       : null;
 
-  const products = await getProducts({ first: 24, after });
+  const { sort, sortKey, reverse, options } = getProductSort(parameters.sort);
+
+  const products = await getProducts({
+    first: 24,
+    after,
+    sortKey,
+    reverse,
+  });
 
   return (
     <ProductListing
@@ -20,6 +28,8 @@ export default async function ProductsPage({ searchParams }) {
       products={products}
       basePath="/produkter"
       hasCursor={Boolean(after)}
+      sort={sort}
+      sortOptions={options}
     />
   );
 }

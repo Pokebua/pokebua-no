@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getCollectionByHandle } from "@/lib/shopify/collections";
+import { getProductSort } from "@/lib/shopify/productSort";
 import ProductListing from "@/components/products/ProductListing";
 
 export default async function CategoryPage({ params, searchParams }) {
@@ -11,9 +12,15 @@ export default async function CategoryPage({ params, searchParams }) {
       ? parameters.after
       : null;
 
+  const { sort, sortKey, reverse, options } = getProductSort(parameters.sort, {
+    isCollection: true,
+  });
+
   const collection = await getCollectionByHandle(category, {
     first: 24,
     after,
+    sortKey,
+    reverse,
   });
 
   if (!collection) {
@@ -27,6 +34,8 @@ export default async function CategoryPage({ params, searchParams }) {
       products={collection.products}
       basePath={`/produkter/${encodeURIComponent(collection.handle)}`}
       hasCursor={Boolean(after)}
+      sort={sort}
+      sortOptions={options}
     />
   );
 }
