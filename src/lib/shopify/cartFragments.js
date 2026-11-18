@@ -2,6 +2,8 @@ import "server-only";
 
 import { imageFields, pageInfoFields } from "./fragments";
 
+export const TWITCH_NAME_ATTRIBUTE = "Twitch-navn";
+
 export const cartLineFields = `
   id
   quantity
@@ -46,6 +48,9 @@ export const cartLineFields = `
 export const cartFields = `
   id
   totalQuantity
+  twitchNameAttribute: attribute(key: "${TWITCH_NAME_ATTRIBUTE}") {
+    value
+  }
   cost {
     subtotalAmount {
       amount

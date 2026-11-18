@@ -1,5 +1,5 @@
 import { shopifyFetch } from "@/lib/shopify/client";
-import { cartFields } from "@/lib/shopify/cartFragments";
+import { cartFields, TWITCH_NAME_ATTRIBUTE } from "@/lib/shopify/cartFragments";
 import { loadRemainingCartLines } from "@/lib/shopify/cart";
 import { getBuyerIp } from "@/lib/shopify/buyerIp";
 import {
@@ -27,6 +27,28 @@ export async function POST(request) {
     return jsonResponse({ error: "Forespørselen er ikke tillatt." }, 403);
   }
 
+  let twitchName;
+
+  if (request.body !== null) {
+    const input = await request.json().catch(() => null);
+
+    if (!input || typeof input.twitchName !== "string") {
+      return jsonResponse({ error: "Twitch-navnet må være tekst." }, 400);
+    }
+
+    twitchName = input.twitchName.trim().replace(/^@/, "");
+
+    if (twitchName && !/^[a-zA-Z0-9_]{1,25}$/.test(twitchName)) {
+      return jsonResponse(
+        {
+          error:
+            "Bruk opptil 25 bokstaver, tall eller understreker i Twitch-navnet.",
+        },
+        400,
+      );
+    }
+  }
+
   try {
     const cartId = await readCartId();
 
@@ -49,6 +71,10 @@ export async function POST(request) {
           cart(id: $cartId) {
             ${cartFields}
             checkoutUrl
+            attributes {
+              key
+              value
+            }
           }
         }
       `,
@@ -69,7 +95,52 @@ export async function POST(request) {
       );
     }
 
-    const cart = await loadRemainingCartLines(data.cart, { buyerIp });
+    let checkoutCart = data.cart;
+
+    if (
+      data.cart.totalQuantity > 0 &&
+      twitchName !== undefined &&
+      twitchName !== (data.cart.twitchNameAttribute?.value ?? "")
+    ) {
+      const attributes = data.cart.attributes.filter(
+        ({ key }) => key !== TWITCH_NAME_ATTRIBUTE,
+      );
+      attributes.push({ key: TWITCH_NAME_ATTRIBUTE, value: twitchName });
+
+      const { cartAttributesUpdate } = await shopifyFetch({
+        query: `
+          mutation SetCheckoutTwitchName($cartId: ID!, $attributes: [AttributeInput!]!) {
+            cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
+              cart {
+                ${cartFields}
+                checkoutUrl
+              }
+              userErrors {
+                message
+              }
+            }
+          }
+        `,
+        variables: { cartId, attributes },
+        buyerIp,
+      });
+
+      if (
+        !cartAttributesUpdate.cart ||
+        cartAttributesUpdate.userErrors.length > 0 ||
+        (cartAttributesUpdate.cart.twitchNameAttribute?.value ?? "") !==
+          twitchName
+      ) {
+        return jsonResponse(
+          { error: "Kunne ikke lagre Twitch-navnet. Prøv igjen." },
+          502,
+        );
+      }
+
+      checkoutCart = cartAttributesUpdate.cart;
+    }
+
+    const cart = await loadRemainingCartLines(checkoutCart, { buyerIp });
 
     if (cart.totalQuantity < 1) {
       return jsonResponse(

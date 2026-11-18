@@ -1,12 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import useCart from "@/hooks/useCart";
 
 export default function CheckoutButton() {
-  const { checkout, itemCount, isLoading, isBusy, isCheckingOut, cartError } =
-    useCart();
+  const {
+    checkout,
+    itemCount,
+    isLoading,
+    isBusy,
+    isCheckingOut,
+    cartError,
+    twitchName,
+    setTwitchName,
+  } = useCart();
 
+  const twitchNameId = useId();
   const pendingRef = useRef(false);
   const [error, setError] = useState("");
 
@@ -30,6 +39,29 @@ export default function CheckoutButton() {
 
   return (
     <div className="mt-6">
+      <label
+        htmlFor={twitchNameId}
+        className="block text-sm font-semibold text-white"
+      >
+        Twitch-navn{" "}
+        <span className="font-normal text-white/80">(valgfritt)</span>
+      </label>
+
+      <input
+        id={twitchNameId}
+        type="text"
+        value={twitchName}
+        onChange={(event) => {
+          setTwitchName(event.target.value);
+          setError("");
+        }}
+        maxLength={26}
+        autoCapitalize="none"
+        spellCheck={false}
+        disabled={isCheckingOut}
+        className="mb-4 mt-2 min-h-11 w-full rounded-md border border-white/50 bg-[#001016] px-3 text-base text-white focus-visible:outline-2 focus-visible:outline-[#f7b900]"
+      />
+
       <button
         type="button"
         onClick={handleCheckout}
