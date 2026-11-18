@@ -1,4 +1,5 @@
 import Pagination from "@/components/Pagination";
+import ProductSort from "./ProductSort";
 import ShopifyProductCard from "./ShopifyProductCard";
 
 export default function ProductListing({
@@ -26,36 +27,11 @@ export default function ProductListing({
           </h1>
 
           {sortOptions?.length > 0 && (
-            <form
-              action={basePath}
-              method="get"
-              className="flex flex-wrap items-center gap-3 text-[#001016]"
-            >
-              <label htmlFor="product-sort" className="font-semibold">
-                Sorter etter
-              </label>
-
-              <select
-                key={sort}
-                id="product-sort"
-                name="sort"
-                defaultValue={sort}
-                className="min-h-11 rounded-lg border border-[#001016] bg-white px-3 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#001016]"
-              >
-                {sortOptions.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-
-              <button
-                type="submit"
-                className="min-h-11 cursor-pointer rounded-lg bg-[#001016] px-4 font-semibold text-[#f7b900] hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#001016]"
-              >
-                Sorter
-              </button>
-            </form>
+            <ProductSort
+              basePath={basePath}
+              sort={sort}
+              options={sortOptions}
+            />
           )}
         </div>
 
