@@ -9,11 +9,15 @@ const focusClassName =
 
 const arrowClassName = `grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-[#001016]/20 bg-white text-[#001016] shadow-sm transition-colors hover:bg-[#fff8e6] ${focusClassName}`;
 
+const soldOutBadgeClassName =
+  "pointer-events-none absolute left-3 top-3 rounded-lg bg-[#001016] px-4 py-2 text-base font-bold uppercase tracking-wide text-white sm:text-lg";
+
 export default function ProductImageGallery({
   images = [],
   preferredImage,
   featuredImage,
   productName,
+  isSoldOut = false,
 }) {
   const imageId = useId();
   const thumbnailRefs = useRef([]);
@@ -138,10 +142,17 @@ export default function ProductImageGallery({
     moveImage(deltaX < 0 ? 1 : -1);
   }
 
+  const soldOutBadge = isSoldOut && (
+    <span aria-hidden="true" className={soldOutBadgeClassName}>
+      Utsolgt
+    </span>
+  );
+
   if (!selectedImage) {
     return (
-      <div className="grid aspect-square min-w-0 place-items-center self-start rounded-2xl border-2 border-yellow-400 bg-white p-6 text-center text-gray-600">
+      <div className="relative grid aspect-square min-w-0 place-items-center self-start rounded-2xl border-2 border-yellow-400 bg-white p-6 text-center text-gray-600">
         Bilde kommer snart
+        {soldOutBadge}
       </div>
     );
   }
@@ -174,8 +185,12 @@ export default function ProductImageGallery({
             fill
             sizes="(min-width: 1152px) 450px, (min-width: 1024px) 42vw, (min-width: 768px) 50vw, 100vw"
             draggable={false}
-            className="select-none object-contain p-3 sm:p-4"
+            className={`select-none object-contain p-3 sm:p-4 ${
+              isSoldOut ? "opacity-60 grayscale" : ""
+            }`}
           />
+
+          {soldOutBadge}
         </div>
 
         {hasMultipleImages && (

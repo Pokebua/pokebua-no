@@ -42,7 +42,12 @@ export async function getCollections({ first = 50, after = null } = {}) {
 
 export async function getCollectionByHandle(
   handle,
-  { first = 24, after = null } = {},
+  {
+    first = 24,
+    after = null,
+    sortKey = "COLLECTION_DEFAULT",
+    reverse = false,
+  } = {},
 ) {
   validatePageSize(first);
 
@@ -58,6 +63,8 @@ export async function getCollectionByHandle(
         $handle: String!
         $first: Int!
         $after: String
+        $sortKey: ProductCollectionSortKeys!
+        $reverse: Boolean!
       ) {
         collection(handle: $handle) {
           ${collectionFields}
@@ -68,7 +75,8 @@ export async function getCollectionByHandle(
           products(
             first: $first
             after: $after
-            sortKey: COLLECTION_DEFAULT
+            sortKey: $sortKey
+            reverse: $reverse
           ) {
             nodes {
               ...ProductCardFields
@@ -80,7 +88,7 @@ export async function getCollectionByHandle(
         }
       }
     `,
-    variables: { handle: handle.trim(), first, after },
+    variables: { handle: handle.trim(), first, after, sortKey, reverse },
   });
 
   return data.collection;

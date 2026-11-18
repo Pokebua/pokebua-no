@@ -256,7 +256,7 @@ export default function NavbarClient({ productLinks }) {
                 </ul>
               </li>
 
-              <li>{renderLink("/event", "Event")}</li>
+              <li>{renderLink("/produkter/andre-produkter", "Event")}</li>
             </ul>
 
             <ul
@@ -335,7 +335,7 @@ export default function NavbarClient({ productLinks }) {
               </ul>
             </li>
 
-            <li>{renderLink("/event", "Event")}</li>
+            <li>{renderLink("/produkter/andre-produkter", "Event")}</li>
           </ul>
 
           <div className="mt-5 flex items-center justify-between border-t border-[#f7b900]/25 pt-4">

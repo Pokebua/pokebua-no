@@ -13,6 +13,7 @@ const variantFields = `
   id
   title
   availableForSale
+  quantityAvailable
   selectedOptions {
     name
     value
@@ -51,15 +52,30 @@ export async function getNewestProducts({ first = 8 } = {}) {
   return data.products.nodes;
 }
 
-export async function getProducts({ first = 24, after = null } = {}) {
+export async function getProducts({
+  first = 24,
+  after = null,
+  sortKey = "TITLE",
+  reverse = false,
+} = {}) {
   validatePageSize(first);
 
   const data = await shopifyFetch({
     query: `
       ${productCardFragment}
 
-      query Products($first: Int!, $after: String) {
-        products(first: $first, after: $after, sortKey: TITLE) {
+      query Products(
+        $first: Int!
+        $after: String
+        $sortKey: ProductSortKeys!
+        $reverse: Boolean!
+      ) {
+        products(
+          first: $first
+          after: $after
+          sortKey: $sortKey
+          reverse: $reverse
+        ) {
           nodes {
             ...ProductCardFields
           }
@@ -69,7 +85,7 @@ export async function getProducts({ first = 24, after = null } = {}) {
         }
       }
     `,
-    variables: { first, after },
+    variables: { first, after, sortKey, reverse },
   });
 
   return data.products;

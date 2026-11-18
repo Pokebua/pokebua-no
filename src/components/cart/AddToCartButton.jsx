@@ -7,6 +7,7 @@ import useToast from "@/hooks/useToast";
 export default function AddToCartButton({
   variantId,
   productName,
+  quantity = 1,
   available = false,
   requiresSellingPlan = false,
   disabled = false,
@@ -40,7 +41,7 @@ export default function AddToCartButton({
     let result;
 
     try {
-      result = await addItem(variantId);
+      result = await addItem(variantId, quantity);
     } catch (error) {
       setError(error.message || "Kunne ikke legge varen i handlekurven.");
       return;
@@ -56,7 +57,10 @@ export default function AddToCartButton({
 
     showToast({
       type: "success",
-      message: `${productName} er lagt i handlekurven.`,
+      message:
+        quantity === 1
+          ? `${productName} er lagt i handlekurven.`
+          : `${quantity} stk. av ${productName} er lagt i handlekurven.`,
     });
   }
 
